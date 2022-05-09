@@ -32,4 +32,9 @@ public class PlayerController : MonoBehaviour
         }
     
     }
+    void OnTriggerEnter2D(Collider2D other){
+        if(other.tag=="door"){
+            Debug.Log("Level Completed!!!");
+        }
+    }
 }

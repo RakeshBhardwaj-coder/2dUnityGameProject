@@ -8,15 +8,52 @@ public class PlayerController : MonoBehaviour
     float rateOfAcceleration = .05f;
     public float acceleration;
     public Rigidbody2D rigidBody2D;
+    public GameObject uiMenu;
+    public GameObject pausedMenu;
+
+    bool isGetDoor;
+    bool isPaused = false;
     // Start is called before the first frame update
     void Start()
     {
+        uiMenu.SetActive(false);
+       pausedMenu.SetActive(false);
 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+    //     if (isPaused == false)
+    //      {
+    //          Time.timeScale = 1;
+    //      }
+         
+    //  else 
+    //      {
+    //          Time.timeScale = 0;
+    //      }
+         
+         
+    //  if (Input.GetKey(KeyCode.P))
+    //      {
+    //          if (isPaused == true)
+    //          {
+    //              isPaused = false;
+    //              pausedMenu.SetActive(true);
+    //          }
+             
+    //      else
+    //          {
+    //              isPaused = true;
+    //              pausedMenu.SetActive(false);
+
+    //          }
+    //      }
+
+        if(isGetDoor)
+            return;
+        
         if (Input.GetAxis("Horizontal") > 0)
         {
             acceleration *= acceleration * rateOfAcceleration;
@@ -63,7 +100,20 @@ public class PlayerController : MonoBehaviour
     {
         if (other.tag == "door")
         {
+
             Debug.Log("Level Completed!!!");
+            uiMenu.SetActive(true);
+            isGetDoor = true;
+
         }
     }
+   void Pause(){
+       Time.timeScale = 0;
+       pausedMenu.SetActive(true);
+
+   }
+    void Resume(){
+       Time.timeScale = 1;
+
+   }
 }

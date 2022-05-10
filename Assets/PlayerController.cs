@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,50 +11,44 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rigidBody2D;
     public GameObject uiMenu;
     public GameObject pausedMenu;
+    public GameObject gameOverMenu;
+
+
 
     bool isGetDoor;
+    bool isGameOver = false;
     bool isPaused = false;
     // Start is called before the first frame update
     void Start()
     {
         uiMenu.SetActive(false);
-       pausedMenu.SetActive(false);
+        pausedMenu.SetActive(false);
+        gameOverMenu.SetActive(false);
+
 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-    //     if (isPaused == false)
-    //      {
-    //          Time.timeScale = 1;
-    //      }
-         
-    //  else 
-    //      {
-    //          Time.timeScale = 0;
-    //      }
-         
-         
-    //  if (Input.GetKey(KeyCode.P))
-    //      {
-    //          if (isPaused == true)
-    //          {
-    //              isPaused = false;
-    //              pausedMenu.SetActive(true);
-    //          }
-             
-    //      else
-    //          {
-    //              isPaused = true;
-    //              pausedMenu.SetActive(false);
-
-    //          }
-    //      }
-
-        if(isGetDoor)
-            return;
         
+
+
+         if (Input.GetKey(KeyCode.Escape))
+             {
+                 if (!isPaused)
+                 {
+                     Pause();
+                   pausedMenu.SetActive(true);
+                 }
+             }
+
+        if (isGameOver){
+            rigidBody2D.velocity = new Vector2(0f, 0f);
+            
+            return;
+            }
+
         if (Input.GetAxis("Horizontal") > 0)
         {
             acceleration *= acceleration * rateOfAcceleration;
@@ -103,17 +98,37 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log("Level Completed!!!");
             uiMenu.SetActive(true);
-            isGetDoor = true;
+            isGameOver = true;
+
+        }
+        else if (other.tag == "Enemy")
+        {
+            // rigidBody2D.velocity = new Vector2(0f, 0f);
+            gameOverMenu.SetActive(true);
+            isGameOver=true;
 
         }
     }
-   void Pause(){
-       Time.timeScale = 0;
-       pausedMenu.SetActive(true);
+   public void Pause()
+    {
+        Time.timeScale = 0;
+        pausedMenu.SetActive(true);
 
-   }
-    void Resume(){
-       Time.timeScale = 1;
+    }
+   public void Resume()
+    {
+        Time.timeScale = 1;
 
-   }
+    }
+    public void RestartGame(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void NextLevel(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+    }
+   
+    public void Quit(){
+
+        Application.Quit(0);
+    }
 }

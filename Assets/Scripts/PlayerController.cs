@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     public GameObject gameOverMenu;
     public Animator doorAnimator;
 
+    public AudioSource damageSound;
+
 
 
     bool isGetDoor;
@@ -26,6 +28,7 @@ public class PlayerController : MonoBehaviour
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
         isGameOver = false;
+        damageSound = GetComponent<AudioSource>();
 
 
 
@@ -130,6 +133,7 @@ public class PlayerController : MonoBehaviour
     }
     public void GameOver()
     {
+        damageSound.Play();
         gameOverMenu.SetActive(true);
         isGameOver = true;
     }

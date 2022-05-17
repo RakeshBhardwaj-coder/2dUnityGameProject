@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public GameObject uiMenu;
     public GameObject pausedMenu;
     public GameObject gameOverMenu;
+    public Animator doorAnimator;
 
 
 
@@ -96,12 +97,17 @@ public class PlayerController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "door")
+        if (other.tag == "CheckPoint")
         {
 
             Debug.Log("Level Completed!!!");
+
             uiMenu.SetActive(true);
             isGameOver = true;
+
+
+        }else if(other.tag=="Door"){
+        doorAnimator.SetBool("playerChecked",true); // if player checked is true door will open.
 
         }
         else if (other.tag == "Enemy")

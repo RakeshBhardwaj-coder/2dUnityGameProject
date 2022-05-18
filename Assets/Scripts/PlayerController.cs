@@ -12,11 +12,14 @@ public class PlayerController : MonoBehaviour
     public GameObject uiMenu;
     public GameObject pausedMenu;
     public GameObject gameOverMenu;
+    public Animator doorAnimator;
+
+    public AudioSource damageSound;
 
 
 
     bool isGetDoor;
-    bool isGameOver = false;
+    public bool isGameOver;
     bool isPaused = false;
     // Start is called before the first frame update
     void Start()
@@ -24,6 +27,9 @@ public class PlayerController : MonoBehaviour
         uiMenu.SetActive(false);
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
+        isGameOver = false;
+        damageSound = GetComponent<AudioSource>();
+
 
 
     }
@@ -31,23 +37,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        
 
 
-         if (Input.GetKey(KeyCode.Escape))
-             {
-                 if (!isPaused)
-                 {
-                     Pause();
-                   pausedMenu.SetActive(true);
-                 }
-             }
 
-        if (isGameOver){
-            rigidBody2D.velocity = new Vector2(0f, 0f);
-            
-            return;
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            if (!isPaused)
+            {
+                Pause();
+                pausedMenu.SetActive(true);
             }
+        }
+
+        if (isGameOver)
+        {
+            rigidBody2D.velocity = new Vector2(0f, 0f);
+
+            return;
+        }
 
         if (Input.GetAxis("Horizontal") > 0)
         {
@@ -93,41 +100,54 @@ public class PlayerController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "door")
+        if (other.tag == "CheckPoint")
         {
 
             Debug.Log("Level Completed!!!");
+
             uiMenu.SetActive(true);
             isGameOver = true;
+
+
+        }else if(other.tag=="Door"){
+        doorAnimator.SetBool("playerChecked",true); // if player checked is true door will open.
 
         }
         else if (other.tag == "Enemy")
         {
             // rigidBody2D.velocity = new Vector2(0f, 0f);
-            gameOverMenu.SetActive(true);
-            isGameOver=true;
+            GameOver();
 
         }
     }
-   public void Pause()
+    public void Pause()
     {
         Time.timeScale = 0;
         pausedMenu.SetActive(true);
 
     }
-   public void Resume()
+    public void Resume()
     {
         Time.timeScale = 1;
 
     }
-    public void RestartGame(){
+    public void GameOver()
+    {
+        damageSound.Play();
+        gameOverMenu.SetActive(true);
+        isGameOver = true;
+    }
+    public void RestartGame()
+    {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    public void NextLevel(){
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+    public void NextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
-   
-    public void Quit(){
+
+    public void Quit()
+    {
 
         Application.Quit(0);
     }

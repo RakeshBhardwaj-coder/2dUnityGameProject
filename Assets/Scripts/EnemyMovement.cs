@@ -6,7 +6,7 @@ public class EnemyMovement : MonoBehaviour
 {
     public GameObject pointB;
     public GameObject pointA;
-    public GameObject enemy;
+    GameObject enemy;
     public float maxSpeed = 3;
     public bool keyHit = false;
     public bool keyHit2 = false;
@@ -14,13 +14,13 @@ public class EnemyMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-    enemy.transform.position = pointA.transform.position;
+    gameObject.transform.position = pointA.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-            if (enemy.transform.position == pointA.transform.position)
+            if (gameObject.transform.position == pointA.transform.position)
         {
             keyHit = true;
 
@@ -31,7 +31,7 @@ public class EnemyMovement : MonoBehaviour
             var change = maxSpeed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, pointB.transform.position, change);
         }
-        if (enemy.transform.position == pointB.transform.position)
+        if (gameObject.transform.position == pointB.transform.position)
         {
             keyHit2 = true;
         }

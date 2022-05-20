@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-
+    [SerializeField]
+    private Animator playerAnimator;
     private float movementX;
     private float movementY;
     public float speed;
+
     float rateOfAcceleration = .05f;
     public float acceleration;
     public Rigidbody2D rigidBody2D;
@@ -32,16 +34,13 @@ public class PlayerController : MonoBehaviour
         gameOverMenu.SetActive(false);
         isGameOver = false;
         damageSound = GetComponent<AudioSource>();
-
-
-
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        
-        Move(movementX,movementY,5);
+
+        Move(movementX, movementY, 5);
         if (Input.GetKey(KeyCode.Escape))
         {
             if (!isPaused)
@@ -62,7 +61,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey("space"))
         {
-            rigidBody2D.velocity = new Vector2(0f,5f);
+            rigidBody2D.velocity = new Vector2(0f, 5f);
 
         }
 
@@ -86,15 +85,14 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.tag == "Enemy")
         {
-            // rigidBody2D.velocity = new Vector2(0f, 0f);
+            rigidBody2D.velocity = new Vector2(0f, 0f);
             GameOver();
 
         }
     }
-     private void Rotate(float rotate, float rotationSpeed)
+    private void Rotate(float rotate, float rotationSpeed)
     {
 
-        // rigidBody2D.velocity = new Vector2(0f,rotate * rotationSpeed);
         transform.Rotate(0, 0, -rotate * rotationSpeed);
         // Rotaion in 3d
         // Vector3 vector = new Vector3(0f, rotate * rotationSpeed, 0f);
@@ -105,24 +103,18 @@ public class PlayerController : MonoBehaviour
     public void Move(float movementX, float movementY, float movementSpeed)
     {
         movementX = Input.GetAxis("Horizontal");
-
-
         movementY = Input.GetAxis("Vertical");
 
-transform.position += new Vector3(movementX,movementY,0) * Time.deltaTime * movementSpeed;
+        transform.position += new Vector3(movementX, movementY, 0) * Time.deltaTime * movementSpeed;
 
-if(!Mathf.Approximately(0,movementX))
-    transform.rotation = movementX>0 ? Quaternion.Euler(0,0,0) : Quaternion.Euler(0,180,0);
-        // if(movementX!=0){
-        //     rigidBody2D.velocity = new Vector2(movementX*movementSpeed,0);
-        // }
-        // else if(movementY!=0){
-        //     rigidBody2D.velocity = new Vector2(0, movementY*movementSpeed);
-        // }
-  
-  
+        if (!Mathf.Approximately(0, movementX))
+            transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
 
-}
+        //--------animation parts below----------
+        
+        playerAnimator.SetFloat("playerSpeed",Mathf.Abs(movementX + movementY)* movementSpeed);
+
+    }
     public void Pause()
     {
         Time.timeScale = 0;

@@ -9,17 +9,15 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnimator;
     private float movementX;
     private float movementY;
-    public float speed;
 
-    float rateOfAcceleration = .05f;
-    public float acceleration;
     public Rigidbody2D rigidBody2D;
 
     [SerializeField]
     private GameObject levelCompleted, pausedMenu, gameOverMenu;
     public Animator doorAnimator;
 
-    public AudioSource damageSound;
+    [SerializeField]
+    private AudioSource damageSound, slidingDoorSound;
 
 
 
@@ -33,36 +31,35 @@ public class PlayerController : MonoBehaviour
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
         isGameOver = false;
-        damageSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-
-        Move(movementX, movementY, 5);
-        if (Input.GetKey(KeyCode.Escape))
+        if (!isGameOver)
         {
-            if (!isPaused)
+
+            Move(5);
+            Slide();
+            if (Input.GetKey(KeyCode.Escape))
             {
-                Pause();
-                pausedMenu.SetActive(true);
+                if (!isPaused)
+                {
+                    Pause();
+                    pausedMenu.SetActive(true);
+                }
+            }
+
+            if (Input.GetKey("space"))
+            {
+                rigidBody2D.velocity = new Vector2(0f, 0f);
+
             }
         }
-
-        if (isGameOver)
+        else
         {
-            rigidBody2D.velocity = new Vector2(0f, 0f);
-
-            return;
-        }
-
-
-
-        if (Input.GetKey("space"))
-        {
-            rigidBody2D.velocity = new Vector2(0f, 5f);
-
+            Move(0);
+            transform.rotation = Quaternion.identity;
         }
 
     }
@@ -74,18 +71,21 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Level Completed!!!");
 
             levelCompleted.SetActive(true);
-            isGameOver = true;
+            // isGameOver = true;
 
 
         }
         else if (other.tag == "Door")
         {
-            doorAnimator.SetBool("playerChecked", true); // if player checked is true door will open.
+            doorAnimator.SetBool("DoorColorYellow", true);
+            doorAnimator.SetBool("DoorOpen", true); // if player checked is true door will open.
 
+            //-------Audio--------
+            slidingDoorSound.Play();
         }
         else if (other.tag == "Enemy")
         {
-            rigidBody2D.velocity = new Vector2(0f, 0f);
+            // rigidBody2D.velocity = new Vector2(0f, 0f);
             GameOver();
 
         }
@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
         // rigidBody3D.MoveRotation(rigidBody3D.rotation * deltaRotation);
     }
 
-    public void Move(float movementX, float movementY, float movementSpeed)
+    private void Move(float movementSpeed)
     {
         movementX = Input.GetAxis("Horizontal");
         movementY = Input.GetAxis("Vertical");
@@ -111,9 +111,22 @@ public class PlayerController : MonoBehaviour
             transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
 
         //--------animation parts below----------
-        
-        playerAnimator.SetFloat("playerSpeed",Mathf.Abs(movementX + movementY)* movementSpeed);
 
+        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX + movementY) * movementSpeed);
+
+    }
+
+    private void Slide()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            playerAnimator.SetBool("isSlide", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("isSlide", false);
+
+        }
     }
     public void Pause()
     {
@@ -128,9 +141,11 @@ public class PlayerController : MonoBehaviour
     }
     public void GameOver()
     {
+        isGameOver = true;
         damageSound.Play();
         gameOverMenu.SetActive(true);
-        isGameOver = true;
+        playerAnimator.SetBool("isDead", isGameOver);
+
     }
     public void RestartGame()
     {

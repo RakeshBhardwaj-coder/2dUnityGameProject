@@ -3101,6 +3101,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1108504805737172336, guid: 6a69c139d6205d91a8da2cae61c6554d,
         type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1701547087}
+    - target: {fileID: 1108504805737172336, guid: 6a69c139d6205d91a8da2cae61c6554d,
+        type: 3}
       propertyPath: pointA
       value: 
       objectReference: {fileID: 850641659}

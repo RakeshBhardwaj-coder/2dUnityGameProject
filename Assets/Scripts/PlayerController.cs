@@ -23,24 +23,62 @@ public class PlayerController : MonoBehaviour
 
     bool isGetDoor;
     public bool isGameOver;
+    public bool isPlayerHurts;
     bool isPaused = false;
+
+    bool isJump = true;
+                 float jumpForce = 5;
+
     // Start is called before the first frame update
     void Start()
     {
         levelCompleted.SetActive(false);
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
-        isGameOver = false;
+        isPlayerHurts = false;
+        StartCoroutine(waitSomeTime());
     }
 
     // Update is called once per frame
+
+    IEnumerator waitSomeTime() {
+     yield return new WaitForSeconds(3);
+   }
     void Update()
     {
-        if (!isGameOver)
+        if (!isPlayerHurts)
         {
 
             Move(5);
             Slide();
+            // Jump(5);
+
+             if(Input.GetKeyDown(KeyCode.Space)){
+            rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+            playerAnimator.SetBool("isPlayerJump",true);
+            isJump = false;
+            playerAnimator.SetBool("isPlayerFall",false);
+            StartCoroutine(waitSomeTime());
+            Debug.Log("kud diya lawda"); 
+
+            // isJump = false;
+            // playerAnimator.SetBool("isPlayerFall",isJump);
+
+
+
+            }
+            else if(!isJump){
+            playerAnimator.SetBool("isPlayerJump",false);
+
+                
+            //     isJump = true;
+            playerAnimator.SetBool("isPlayerFall",true);
+            // isJump = false;
+            // playerAnimator.SetBool("isPlayerJump",isJump);
+
+                
+            }
+            
             if (Input.GetKey(KeyCode.Escape))
             {
                 if (!isPaused)
@@ -52,7 +90,6 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey("space"))
             {
-                rigidBody2D.velocity = new Vector2(0f, 0f);
 
             }
         }
@@ -71,7 +108,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Level Completed!!!");
 
             levelCompleted.SetActive(true);
-            // isGameOver = true;
+            // isPlayerHurts = true;
 
 
         }
@@ -86,7 +123,8 @@ public class PlayerController : MonoBehaviour
         else if (other.tag == "Enemy")
         {
             // rigidBody2D.velocity = new Vector2(0f, 0f);
-            GameOver();
+            PlayerHurts();
+            // StartCoroutine(waitSomeTime());
 
         }
     }
@@ -113,6 +151,17 @@ public class PlayerController : MonoBehaviour
         //--------animation parts below----------
 
         playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX + movementY) * movementSpeed);
+
+    }
+    private void Jump(float jumpForce)
+    {
+    //    if(Input.GetKeyDown(KeyCode.Space)){
+    //         rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+    //         playerAnimator.SetBool("isPlayerJump",true);
+
+    //         }
+            // playerAnimator.SetBool("isPlayerFall",true);
+
 
     }
 
@@ -144,7 +193,16 @@ public class PlayerController : MonoBehaviour
         isGameOver = true;
         damageSound.Play();
         gameOverMenu.SetActive(true);
-        playerAnimator.SetBool("isDead", isGameOver);
+        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
+
+    }
+    public void PlayerHurts()
+    {
+
+        isPlayerHurts = true;
+        damageSound.Play();
+
+        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
 
     }
     public void RestartGame()

@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
+    PlayerController playerController;
     public GameObject pointB;
     public GameObject pointA;
     public GameObject player;
     public float maxSpeed = 3;
     public bool keyHit = false;
     public bool keyHit2 = false;
-    bool isGameOver = true;
     // Start is called before the first frame update
     void Start()
     {
         gameObject.transform.position = pointA.transform.position;
+        playerController = player.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -43,7 +44,7 @@ public class EnemyMovement : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, pointA.transform.position, change2);
         }
 
-        if(isGameOver){
+        if(playerController.isGameOver){
             transform.position = new Vector3(0,player.transform.position.y,0);
             }
     }

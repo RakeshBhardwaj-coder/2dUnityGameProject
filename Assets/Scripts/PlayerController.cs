@@ -27,58 +27,81 @@ public class PlayerController : MonoBehaviour
     bool isPaused = false;
 
     bool isJump = true;
-                 float jumpForce = 5;
+    float jumpForce = 5;
+
+    //Health Bar Variables
+
+    public int healthDamage;
+    int playerMaxHealth = 100;
+    int playerHealth;
+    public HealthBar healthBar;
 
     // Start is called before the first frame update
     void Start()
     {
+        //boxCollider getting here :-
+        // boxCollider2D = gameObject.GetComponent<BoxCollider2D>();
+        // // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
+        // polygonCollider2D.enabled = true;
+        // boxCollider2D.enabled = true;
+        //health bar managing:-
+        playerHealth = playerMaxHealth;
+        healthBar.SetMaxHealth(playerMaxHealth);
+        // set the palyer health 100 when start the game
+        // takeDamage = GameObjet.Find("").GetComponent<TakeDamage>();
+        // takeDamage = saw.GetComponent<TakeDamage>();
+        playerHealth = playerMaxHealth;
+
+
         levelCompleted.SetActive(false);
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
         isPlayerHurts = false;
-        StartCoroutine(waitSomeTime());
+        isGameOver = false;
     }
 
     // Update is called once per frame
 
-    IEnumerator waitSomeTime() {
-     yield return new WaitForSeconds(3);
-   }
+    IEnumerator waitSomeTime()
+    {
+        yield return new WaitForSeconds(3);
+    }
     void Update()
     {
-        if (!isPlayerHurts)
+        if (!isGameOver)
         {
 
             Move(5);
             Slide();
             // Jump(5);
 
-             if(Input.GetKeyDown(KeyCode.Space)){
-            rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
-            playerAnimator.SetBool("isPlayerJump",true);
-            isJump = false;
-            playerAnimator.SetBool("isPlayerFall",false);
-            StartCoroutine(waitSomeTime());
-            Debug.Log("kud diya lawda"); 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+                playerAnimator.SetBool("isPlayerJump", true);
+                isJump = false;
+                playerAnimator.SetBool("isPlayerFall", false);
+                StartCoroutine(waitSomeTime());
 
-            // isJump = false;
-            // playerAnimator.SetBool("isPlayerFall",isJump);
+                // isJump = false;
+                // playerAnimator.SetBool("isPlayerFall",isJump);
 
 
 
             }
-            else if(!isJump){
-            playerAnimator.SetBool("isPlayerJump",false);
+            else if (!isJump)
+            {
+                playerAnimator.SetBool("isPlayerJump", false);
 
-                
-            //     isJump = true;
-            playerAnimator.SetBool("isPlayerFall",true);
-            // isJump = false;
-            // playerAnimator.SetBool("isPlayerJump",isJump);
 
-                
+                //     isJump = true;
+                playerAnimator.SetBool("isPlayerFall", true);
+                // isJump = false;
+                // playerAnimator.SetBool("isPlayerJump",isJump);
+
+
             }
-            
+
             if (Input.GetKey(KeyCode.Escape))
             {
                 if (!isPaused)
@@ -123,7 +146,7 @@ public class PlayerController : MonoBehaviour
         else if (other.tag == "Enemy")
         {
             // rigidBody2D.velocity = new Vector2(0f, 0f);
-            PlayerHurts();
+            PlayerHurts(20);
             // StartCoroutine(waitSomeTime());
 
         }
@@ -155,12 +178,12 @@ public class PlayerController : MonoBehaviour
     }
     private void Jump(float jumpForce)
     {
-    //    if(Input.GetKeyDown(KeyCode.Space)){
-    //         rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
-    //         playerAnimator.SetBool("isPlayerJump",true);
+        //    if(Input.GetKeyDown(KeyCode.Space)){
+        //         rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+        //         playerAnimator.SetBool("isPlayerJump",true);
 
-    //         }
-            // playerAnimator.SetBool("isPlayerFall",true);
+        //         }
+        // playerAnimator.SetBool("isPlayerFall",true);
 
 
     }
@@ -196,13 +219,25 @@ public class PlayerController : MonoBehaviour
         playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
 
     }
-    public void PlayerHurts()
+    public void PlayerHurts(int damage)
     {
 
-        isPlayerHurts = true;
+        // isPlayerHurts = true;
         damageSound.Play();
 
-        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
+        playerAnimator.SetBool("isPlayerHurt", true);
+        if(playerHealth<=0){
+             // TakeDamage(GiveDamage());
+        playerHealth -= damage;
+        healthBar.SetHealth(playerHealth);
+
+            isGameOver = true;
+         isPlayerHurts = false;
+                playerAnimator.SetBool("isDead", true);
+                playerAnimator.SetBool("isPlayerHurt", false);
+                }else{
+                    // isPlayerHurts = true;
+                }
 
     }
     public void RestartGame()
@@ -213,9 +248,26 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+      public void Distroy()
+    {
+        Destroy(gameObject);
+    }
 
     public void Quit()
     {
         Application.Quit(0);
+    }
+
+     public void EnableInvincible()
+    {
+        // boxCollider2D.enabled = true;
+        // polygonCollider2D.enabled = true;
+        PlayerHurts(1);
+    }
+    public void DisableInvincible()
+    {
+        // boxCollider2D.enabled = false;
+        // polygonCollider2D.enabled = false;
+        PlayerHurts(0);
     }
 }

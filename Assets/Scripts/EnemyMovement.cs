@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    public int takeDamage;
     PlayerController playerController;
     public GameObject pointB;
     public GameObject pointA;
@@ -48,9 +47,5 @@ public class EnemyMovement : MonoBehaviour
         if(playerController.isGameOver){
             transform.position = new Vector3(0,player.transform.position.y,0);
             }
-    }
-
-    void TakeDamage(int damage){
-        // health -= damage;
     }
 }

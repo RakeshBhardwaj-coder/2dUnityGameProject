@@ -5,14 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-
-    //Health Bar Variables
-    
-    public int healthDamage;
-    int playerMaxHealth = 100;
-    int playerHealth;
-    public HealthBar healthBar;
-
     [SerializeField]
     private Animator playerAnimator;
     private float movementX;
@@ -22,8 +14,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private GameObject levelCompleted, pausedMenu, gameOverMenu;
-
-    [SerializeField] private GameObject saw,spike;
     public Animator doorAnimator;
 
     [SerializeField]
@@ -37,83 +27,58 @@ public class PlayerController : MonoBehaviour
     bool isPaused = false;
 
     bool isJump = true;
-    float jumpForce = 5;
-
-    private TakeDamage takeDamage;
-
-    private BoxCollider2D boxCollider2D;
-    PolygonCollider2D polygonCollider2D;
-
+                 float jumpForce = 5;
 
     // Start is called before the first frame update
     void Start()
     {
-
-        //boxCollider getting here :-
-        // boxCollider2D = gameObject.GetComponent<BoxCollider2D>();
-        // // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
-        // polygonCollider2D.enabled = true;
-        // boxCollider2D.enabled = true;
-
-        //health bar managing:-
-        playerHealth = playerMaxHealth;
-        healthBar.SetMaxHealth(playerMaxHealth);
-
-        // set the palyer health 100 when start the game
-        // takeDamage = GameObjet.Find("").GetComponent<TakeDamage>();
-        takeDamage = saw.GetComponent<TakeDamage>();
-        playerHealth = playerMaxHealth;
-
         levelCompleted.SetActive(false);
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
         isPlayerHurts = false;
-        isGameOver = false;
-        // StartCoroutine(waitSomeTime());
+        StartCoroutine(waitSomeTime());
     }
 
     // Update is called once per frame
 
-    //     IEnumerator waitSomeTime() {
-    //      yield return new WaitForSeconds(3);
-    //    }
+    IEnumerator waitSomeTime() {
+     yield return new WaitForSeconds(3);
+   }
     void Update()
     {
-        if (!isGameOver)
+        if (!isPlayerHurts)
         {
 
             Move(5);
             Slide();
             // Jump(5);
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
-                playerAnimator.SetBool("isPlayerJump", true);
-                isJump = false;
-                playerAnimator.SetBool("isPlayerFall", false);
+             if(Input.GetKeyDown(KeyCode.Space)){
+            rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+            playerAnimator.SetBool("isPlayerJump",true);
+            isJump = false;
+            playerAnimator.SetBool("isPlayerFall",false);
+            StartCoroutine(waitSomeTime());
+            Debug.Log("kud diya lawda"); 
 
-                // StartCoroutine(waitSomeTime());
+            // isJump = false;
+            // playerAnimator.SetBool("isPlayerFall",isJump);
 
-                // isJump = false;
-                // playerAnimator.SetBool("isPlayerFall",isJump);
-
-
-
-            }
-            else if (!isJump)
-            {
-                playerAnimator.SetBool("isPlayerJump", false);
-
-
-                //     isJump = true;
-                playerAnimator.SetBool("isPlayerFall", true);
-                // isJump = false;
-                // playerAnimator.SetBool("isPlayerJump",isJump);
 
 
             }
+            else if(!isJump){
+            playerAnimator.SetBool("isPlayerJump",false);
 
+                
+            //     isJump = true;
+            playerAnimator.SetBool("isPlayerFall",true);
+            // isJump = false;
+            // playerAnimator.SetBool("isPlayerJump",isJump);
+
+                
+            }
+            
             if (Input.GetKey(KeyCode.Escape))
             {
                 if (!isPaused)
@@ -123,6 +88,10 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
+            if (Input.GetKey("space"))
+            {
+
+            }
         }
         else
         {
@@ -151,29 +120,13 @@ public class PlayerController : MonoBehaviour
             //-------Audio--------
             slidingDoorSound.Play();
         }
-        else if (other.CompareTag("Enemy"))
+        else if (other.tag == "Enemy")
         {
             // rigidBody2D.velocity = new Vector2(0f, 0f);
-            // isPlayerHurts = true;
-            // PlayerHurts(20, true);
-            // playerAnimator.SetBool("isPlayerHurt",true); 
-            // PlayerHurts(20);
-            // isPlayerHurts = false;
-
-            if (playerHealth <= 0)
-            {
-                isPlayerHurts = false;
-                playerAnimator.SetBool("isDead", true);
-                playerAnimator.SetBool("isPlayerHurt", false);
-            }
+            PlayerHurts();
             // StartCoroutine(waitSomeTime());
 
         }
-        else
-        {
-            isPlayerHurts = false;
-        }
-
     }
     private void Rotate(float rotate, float rotationSpeed)
     {
@@ -200,7 +153,17 @@ public class PlayerController : MonoBehaviour
         playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX + movementY) * movementSpeed);
 
     }
+    private void Jump(float jumpForce)
+    {
+    //    if(Input.GetKeyDown(KeyCode.Space)){
+    //         rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+    //         playerAnimator.SetBool("isPlayerJump",true);
 
+    //         }
+            // playerAnimator.SetBool("isPlayerFall",true);
+
+
+    }
 
     private void Slide()
     {
@@ -230,51 +193,17 @@ public class PlayerController : MonoBehaviour
         isGameOver = true;
         damageSound.Play();
         gameOverMenu.SetActive(true);
-        playerAnimator.SetBool("isPlayerHurt", false);
+        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
 
     }
-    public void PlayerHurts(int isHurt)
+    public void PlayerHurts()
     {
 
-        // TakeDamage(GiveDamage());
-        playerHealth -= takeDamage.damage;
-        healthBar.SetHealth(playerHealth);
+        isPlayerHurts = true;
         damageSound.Play();
-        if(isHurt == 0){
-        playerAnimator.SetBool("isPlayerHurt", false);
 
+        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
 
-        }
-        else{
-            playerAnimator.SetBool("isPlayerHurt",true);
-        }
-        // isPlayerHurts = true;
-        if (playerHealth <= 0)
-        {
-            isGameOver = true;
-        }
-
-        if (!isPlayerHurts)
-        {
-
-            // playerAnimator.SetBool("isPlayerHurt", isHurt);
-            // isPlayerHurts = false;
-
-        }
-        else
-        {
-            // playerAnimator.SetBool("isPlayerHurt", isHurt);
-        }
-
-
-
-    }
-    // enemy.TakeDamage(player.GiveDamage()); This is the Concept.
-
-    int GiveDamage()
-    {
-
-        return healthDamage;
     }
     public void RestartGame()
     {
@@ -284,36 +213,9 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
-    public void Distroy()
-    {
-        Destroy(gameObject);
-    }
-
 
     public void Quit()
     {
         Application.Quit(0);
     }
-
-    public void EnableInvincible()
-    {
-        boxCollider2D.enabled = true;
-        polygonCollider2D.enabled = true;
-
-        PlayerHurts(1);
-
-    }
-    public void DisableInvincible()
-    {
-        boxCollider2D.enabled = false;
-        polygonCollider2D.enabled = false;
-
-        PlayerHurts(0);
-
-
-
-
-    }
-
-
 }

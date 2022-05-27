@@ -7,8 +7,6 @@ TagManager:
   - Enemy
   - Door
   - CheckPoint
-  - Saw
-  - Spike
   layers:
   - Default
   - TransparentFX

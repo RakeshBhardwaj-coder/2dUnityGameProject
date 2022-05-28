@@ -33,15 +33,17 @@ public class PlayerController : MonoBehaviour
 
     public int healthDamage;
     int playerMaxHealth = 100;
-    int playerHealth;
+    [SerializeField] int playerHealth;
     public HealthBar healthBar;
+    public BoxCollider2D boxCollider2D;
+    public PolygonCollider2D polygonCollider2D;
 
     // Start is called before the first frame update
     void Start()
     {
         //boxCollider getting here :-
         // boxCollider2D = gameObject.GetComponent<BoxCollider2D>();
-        // // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
+        // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
         // polygonCollider2D.enabled = true;
         // boxCollider2D.enabled = true;
         //health bar managing:-
@@ -50,7 +52,6 @@ public class PlayerController : MonoBehaviour
         // set the palyer health 100 when start the game
         // takeDamage = GameObjet.Find("").GetComponent<TakeDamage>();
         // takeDamage = saw.GetComponent<TakeDamage>();
-        playerHealth = playerMaxHealth;
 
 
         levelCompleted.SetActive(false);
@@ -81,7 +82,6 @@ public class PlayerController : MonoBehaviour
                 playerAnimator.SetBool("isPlayerJump", true);
                 isJump = false;
                 playerAnimator.SetBool("isPlayerFall", false);
-                StartCoroutine(waitSomeTime());
 
                 // isJump = false;
                 // playerAnimator.SetBool("isPlayerFall",isJump);
@@ -111,10 +111,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey("space"))
-            {
-
-            }
         }
         else
         {
@@ -145,12 +141,12 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.tag == "Enemy")
         {
-            // rigidBody2D.velocity = new Vector2(0f, 0f);
-            PlayerHurts(20);
-            // StartCoroutine(waitSomeTime());
 
+            PlayerHurts(20);
+           
         }
     }
+    
     private void Rotate(float rotate, float rotationSpeed)
     {
 
@@ -174,17 +170,6 @@ public class PlayerController : MonoBehaviour
         //--------animation parts below----------
 
         playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX + movementY) * movementSpeed);
-
-    }
-    private void Jump(float jumpForce)
-    {
-        //    if(Input.GetKeyDown(KeyCode.Space)){
-        //         rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
-        //         playerAnimator.SetBool("isPlayerJump",true);
-
-        //         }
-        // playerAnimator.SetBool("isPlayerFall",true);
-
 
     }
 
@@ -222,22 +207,31 @@ public class PlayerController : MonoBehaviour
     public void PlayerHurts(int damage)
     {
 
-        // isPlayerHurts = true;
         damageSound.Play();
 
-        playerAnimator.SetBool("isPlayerHurt", true);
-        if(playerHealth<=0){
-             // TakeDamage(GiveDamage());
         playerHealth -= damage;
         healthBar.SetHealth(playerHealth);
-
-            isGameOver = true;
-         isPlayerHurts = false;
-                playerAnimator.SetBool("isDead", true);
+        playerAnimator.SetBool("isPlayerHurt",true);
+         if (playerHealth <= 0)
+            {   
                 playerAnimator.SetBool("isPlayerHurt", false);
-                }else{
-                    // isPlayerHurts = true;
-                }
+                
+                playerAnimator.SetBool("isDead", true);
+                
+
+                isGameOver = true;
+                return;
+            }
+
+    }
+    void DoPlayerHurtAnimFalse()
+    {
+        playerAnimator.SetBool("isPlayerHurt", false);
+
+    }
+    void DoPlayerDeadAnimFalse()
+    {
+        playerAnimator.SetBool("isDead", false);
 
     }
     public void RestartGame()
@@ -248,7 +242,7 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
-      public void Distroy()
+    public void Distroy()
     {
         Destroy(gameObject);
     }
@@ -258,7 +252,7 @@ public class PlayerController : MonoBehaviour
         Application.Quit(0);
     }
 
-     public void EnableInvincible()
+    public void EnableInvincible()
     {
         // boxCollider2D.enabled = true;
         // polygonCollider2D.enabled = true;

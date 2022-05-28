@@ -3021,6 +3021,10 @@ MonoBehaviour:
   slidingDoorSound: {fileID: 467975622}
   isGameOver: 0
   isPlayerHurts: 0
+  healthDamage: 0
+  healthBar: {fileID: 324001350}
+  boxCollider2D: {fileID: 1701547096}
+  polygonCollider2D: {fileID: 1701547095}
 --- !u!95 &1701547092
 Animator:
   serializedVersion: 3
@@ -3078,7 +3082,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 2739e08459d8fe43cb08d3e5cb154cdd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -3591,25 +3595,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a69c139d6205d91a8da2cae61c6554d, type: 3}
---- !u!1 &1108504805349916842 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1108504805737172337, guid: 6a69c139d6205d91a8da2cae61c6554d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1108504805349916841}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1108504805349916843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1108504805349916842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a18d38fed5f24cf2998b35af64b8942, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 20
 --- !u!1001 &2636195033046604823
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3753,25 +3738,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b45c1b1f5fcb0de29859f5b1dba5169, type: 3}
---- !u!1 &3939535593520294081 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3939535593304872615, guid: 6b45c1b1f5fcb0de29859f5b1dba5169,
-    type: 3}
-  m_PrefabInstance: {fileID: 3939535593520294080}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3939535593520294082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3939535593520294081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a18d38fed5f24cf2998b35af64b8942, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 10
 --- !u!1001 &4165012306686268961
 PrefabInstance:
   m_ObjectHideFlags: 0

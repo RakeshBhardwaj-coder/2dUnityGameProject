@@ -44,8 +44,8 @@ public class EnemyMovement : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, pointA.transform.position, change2);
         }
 
-        if(playerController.isGameOver){
-            transform.position = new Vector3(0,player.transform.position.y,0);
-            }
+        // if(playerController.isGameOver){
+        //     transform.position = new Vector3(0,player.transform.position.y,0);
+        //     }
     }
 }

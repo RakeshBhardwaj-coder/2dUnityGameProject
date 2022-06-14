@@ -62,11 +62,6 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-
-    IEnumerator waitSomeTime()
-    {
-        yield return new WaitForSeconds(3);
-    }
     void Update()
     {
         if (!isGameOver)
@@ -76,7 +71,7 @@ public class PlayerController : MonoBehaviour
             Slide();
             // Jump(5);
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.W))
             {
                 rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
                 playerAnimator.SetBool("isPlayerJump", true);
@@ -160,22 +155,22 @@ public class PlayerController : MonoBehaviour
     private void Move(float movementSpeed)
     {
         movementX = Input.GetAxis("Horizontal");
-        movementY = Input.GetAxis("Vertical");
+        // movementY = Input.GetAxis("Vertical");
 
-        transform.position += new Vector3(movementX, movementY, 0) * Time.deltaTime * movementSpeed;
+        transform.position += new Vector3(movementX, 0, 0) * Time.deltaTime * movementSpeed;
 
         if (!Mathf.Approximately(0, movementX))
             transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
 
         //--------animation parts below----------
 
-        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX + movementY) * movementSpeed);
+        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX ) * movementSpeed);
 
     }
 
     private void Slide()
     {
-        if (Input.GetKey(KeyCode.C))
+        if (Input.GetKey(KeyCode.S))
         {
             playerAnimator.SetBool("isSlide", true);
         }

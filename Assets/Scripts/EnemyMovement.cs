@@ -10,7 +10,6 @@ public class EnemyMovement : MonoBehaviour
     public GameObject player;
     public float maxSpeed = 3;
     public bool keyHit = false;
-    public bool keyHit2 = false;
     // Start is called before the first frame update
     void Start()
     {

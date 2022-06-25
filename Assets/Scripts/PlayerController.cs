@@ -5,12 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+
+    public CharacterController2D characterController2D;
+
+    [SerializeField]
+    private GameObject player;
     [SerializeField]
     private Animator playerAnimator;
-    private float movementX;
+    private float movementX = 0f;
     private float movementY;
 
-    public Rigidbody2D rigidBody2D;
 
     [SerializeField]
     private GameObject levelCompleted, pausedMenu, gameOverMenu;
@@ -38,22 +42,15 @@ public class PlayerController : MonoBehaviour
     public BoxCollider2D boxCollider2D;
     public PolygonCollider2D polygonCollider2D;
 
+
     // Start is called before the first frame update
     void Start()
     {
-        //boxCollider getting here :-
-        // boxCollider2D = gameObject.GetComponent<BoxCollider2D>();
-        // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
-        // polygonCollider2D.enabled = true;
-        // boxCollider2D.enabled = true;
+        // character conttroller:
+        // characterController2D = GetComponent<CharacterController2D>();
         //health bar managing:-
         playerHealth = playerMaxHealth;
         healthBar.SetMaxHealth(playerMaxHealth);
-        // set the palyer health 100 when start the game
-        // takeDamage = GameObjet.Find("").GetComponent<TakeDamage>();
-        // takeDamage = saw.GetComponent<TakeDamage>();
-
-
         levelCompleted.SetActive(false);
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
@@ -64,55 +61,61 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isGameOver)
-        {
+            movementX = Input.GetAxisRaw("Horizontal") * 50f;
+      
+        
+        // if (!isGameOver)
+        // {
 
-            Move(5);
-            Slide();
-            // Jump(5);
+            
+        //     Slide();
+        //     // Jump(5);
 
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.W))
-            {
-                rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
-                playerAnimator.SetBool("isPlayerJump", true);
-                isJump = false;
-                playerAnimator.SetBool("isPlayerFall", false);
+        //     if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.W))
+        //     {
+        //         // rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+        //         playerAnimator.SetBool("isPlayerJump", true);
+        //         isJump = false;
+        //         playerAnimator.SetBool("isPlayerFall", false);
 
-                // isJump = false;
-                // playerAnimator.SetBool("isPlayerFall",isJump);
-
-
-
-            }
-            else if (!isJump)
-            {
-                playerAnimator.SetBool("isPlayerJump", false);
+        //         // isJump = false;
+        //         // playerAnimator.SetBool("isPlayerFall",isJump);
 
 
-                //     isJump = true;
-                playerAnimator.SetBool("isPlayerFall", true);
-                // isJump = false;
-                // playerAnimator.SetBool("isPlayerJump",isJump);
+
+        //     }
+        //     else if (!isJump)
+        //     {
+        //         playerAnimator.SetBool("isPlayerJump", false);
 
 
-            }
+        //         //     isJump = true;
+        //         playerAnimator.SetBool("isPlayerFall", true);
+        //         // isJump = false;
+        //         // playerAnimator.SetBool("isPlayerJump",isJump);
 
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                if (!isPaused)
-                {
-                    Pause();
-                    pausedMenu.SetActive(true);
-                }
-            }
 
-        }
-        else
-        {
-            Move(0);
-            transform.rotation = Quaternion.identity;
-        }
+        //     }
 
+        //     if (Input.GetKey(KeyCode.Escape))
+        //     {
+        //         if (!isPaused)
+        //         {
+        //             Pause();
+        //             pausedMenu.SetActive(true);
+        //         }
+        //     }
+
+        // }
+        // else
+        // {
+        //     // Move(0);
+        //     transform.rotation = Quaternion.identity;
+        // }
+
+    }
+    void FixedUpdate(){
+        characterController2D.Move(movementX * Time.fixedDeltaTime, false, false);
     }
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -140,6 +143,7 @@ public class PlayerController : MonoBehaviour
             PlayerHurts(20);
            
         }
+        
     }
     
     private void Rotate(float rotate, float rotationSpeed)
@@ -157,7 +161,8 @@ public class PlayerController : MonoBehaviour
         movementX = Input.GetAxis("Horizontal");
         // movementY = Input.GetAxis("Vertical");
 
-        transform.position += new Vector3(movementX, 0, 0) * Time.deltaTime * movementSpeed;
+        characterController2D.Move(movementX * Time.fixedDeltaTime, false, false);
+        // transform.position += new Vector3(movementX, 0, 0) * Time.deltaTime * movementSpeed;
 
         if (!Mathf.Approximately(0, movementX))
             transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
@@ -167,6 +172,8 @@ public class PlayerController : MonoBehaviour
         playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX ) * movementSpeed);
 
     }
+ 
+   
 
     private void Slide()
     {

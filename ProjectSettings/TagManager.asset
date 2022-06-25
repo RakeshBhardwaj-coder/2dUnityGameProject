@@ -7,7 +7,6 @@ TagManager:
   - Enemy
   - Door
   - CheckPoint
-  - Ground
   layers:
   - Default
   - TransparentFX
@@ -17,7 +16,7 @@ TagManager:
   - UI
   - 
   - 
-  - Player
+  - 
   - 
   - 
   - 

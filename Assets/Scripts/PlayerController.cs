@@ -10,7 +10,10 @@ public class PlayerController : MonoBehaviour
     private float movementX;
     private float movementY;
 
-    public Rigidbody2D rigidBody2D;
+    [SerializeField]
+    private float playerSpeed;
+
+    private Rigidbody2D rigidbody2D;
 
     [SerializeField]
     private GameObject levelCompleted, pausedMenu, gameOverMenu;
@@ -53,6 +56,8 @@ public class PlayerController : MonoBehaviour
         // takeDamage = GameObjet.Find("").GetComponent<TakeDamage>();
         // takeDamage = saw.GetComponent<TakeDamage>();
 
+        rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+
 
         levelCompleted.SetActive(false);
         pausedMenu.SetActive(false);
@@ -62,7 +67,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!isGameOver)
         {
@@ -73,7 +78,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.W))
             {
-                rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
                 playerAnimator.SetBool("isPlayerJump", true);
                 isJump = false;
                 playerAnimator.SetBool("isPlayerFall", false);
@@ -156,8 +161,9 @@ public class PlayerController : MonoBehaviour
     {
         movementX = Input.GetAxis("Horizontal");
         // movementY = Input.GetAxis("Vertical");
-
-        transform.position += new Vector3(movementX, 0, 0) * Time.deltaTime * movementSpeed;
+        transform.position += new Vector3(playerSpeed,0,0) * Time.fixedDeltaTime * movementSpeed;
+         if (!Mathf.Approximately(0, movementX))
+         transform.position += movementX>0 ? new Vector3(playerSpeed, 0, 0) * Time.fixedDeltaTime * movementSpeed : new Vector3(-playerSpeed, 0, 0) * Time.fixedDeltaTime  * movementSpeed;
 
         if (!Mathf.Approximately(0, movementX))
             transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);

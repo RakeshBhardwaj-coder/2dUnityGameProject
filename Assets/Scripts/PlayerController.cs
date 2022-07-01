@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private float movementY;
 
     [SerializeField]
-    private float playerSpeed, jumpForce = 70, jumpHeight=2f;
+    private float playerSpeed, jumpForce = 70, jumpHeight = 2f;
 
 
 
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         gameOverMenu.SetActive(false);
         isPlayerHurts = false;
         isGameOver = false;
-        
+
     }
 
     // Update is called once per frame
@@ -91,64 +91,8 @@ public class PlayerController : MonoBehaviour
 
             Move(5);
             Slide();
-            // Jump(5);
-              if(IsGrounded() &&  Input.GetButtonDown("Jump")){
-                isJump = true;
-                rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
-                playerAnimator.SetBool("isPlayerJump", true);
-            }else if(gameObject.transform.position.y >= jumpHeight){ // *jumpHeight*
-                 isJump = false;
-                 playerAnimator.SetBool("isPlayerJump", false);
-                isFall = true;
-                playerAnimator.SetBool("isPlayerFall", true);               
-                }
-                else if(isFall){
-                  playerAnimator.SetBool("isGrounded", true);
-                isGround = true;
-                playerAnimator.SetBool("isPlayerFall",false);
-            }
-            
-          
+            Jump();
 
-            // if(IsGrounded() && Input.GetButtonDown("Jump")){
-            //     playerAnimator.SetBool("isGrounded", false);
-            //     isGround = false;
-            // }else if(IsGrounded()){
-            //       playerAnimator.SetBool("isGrounded", true);
-            //     isGround = true;
-            // }
-
-            // if(!isGround){
-            //       rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
-            //     playerAnimator.SetBool("isPlayerJump", true);
-            //     isJump = true;
-            // }
-
-            // if(IsGrounded()){
-            //     playerAnimator.SetBool("isGrounded", true);
-            //     isGround = true;
-            // }
-            //  else if (IsGrounded() && Input.GetButtonDown("Jump"))
-            // {
-            //     playerAnimator.SetBool("isGrounded", false);
-            //     isGround = false;
-            //     rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
-            //     playerAnimator.SetBool("isPlayerJump", true);
-            //     isJump = true;
-            //     playerAnimator.SetBool("isPlayerFall", false);
-            //     isFall = false;
-
-
-            // }
-            // else if (isJump && gameObject.transform.position.y < 2)
-            // {
-            //     playerAnimator.SetBool("isPlayerFall", true);
-            //     isFall = true;
-            //     playerAnimator.SetBool("isPlayerJump", false);
-            //     isJump = false;
-            //     playerAnimator.SetBool("isGrounded", false);
-            // }
-        
 
 
 
@@ -173,7 +117,7 @@ public class PlayerController : MonoBehaviour
     public bool IsGrounded()
     {
         RaycastHit2D rayHitCast2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, 1f, platformLayerMask);
-        Debug.Log(rayHitCast2D.collider);       
+        Debug.Log(rayHitCast2D.collider);
         return rayHitCast2D.collider != null;
     }
     void OnTriggerEnter2D(Collider2D other)
@@ -240,9 +184,6 @@ public class PlayerController : MonoBehaviour
 
         }
         movementX = Input.GetAxis("Horizontal");
-        // movementY = Input.GetAxis("Vertical");
-        //  if (!Mathf.Approximately(0, movementX))
-        //  transform.position += movementX>0 ? new Vector3(movementSpeed, 0, 0) * Time.fixedDeltaTime   : new Vector3(-movementSpeed, 0, 0) * Time.fixedDeltaTime;
 
         if (!Mathf.Approximately(0, movementX))
             transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
@@ -251,6 +192,28 @@ public class PlayerController : MonoBehaviour
 
         playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX) * movementSpeed);
 
+    }
+    private void Jump()
+    {
+        if (IsGrounded() && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)))
+        {
+            isJump = true;
+            rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
+            playerAnimator.SetBool("isPlayerJump", true);
+        }
+        else if (gameObject.transform.position.y >= jumpHeight)
+        { // *jumpHeight*
+            isJump = false;
+            playerAnimator.SetBool("isPlayerJump", false);
+            isFall = true;
+            playerAnimator.SetBool("isPlayerFall", true);
+        }
+        else if (isFall)
+        {
+            playerAnimator.SetBool("isGrounded", true);
+            isGround = true;
+            playerAnimator.SetBool("isPlayerFall", false);
+        }
     }
 
     private void Slide()

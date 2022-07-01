@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private float movementY;
 
     [SerializeField]
-    private float playerSpeed,jumpForce = 70;
+    private float playerSpeed, jumpForce = 70;
 
 
     private Rigidbody2D rigidbody2D;
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     public LayerMask platformLayerMask;
 
-    bool moveLeft, moveRight=true;
+    bool moveLeft, moveRight = true;
 
     float? lastGroundedTime;
     float? jumpBtnPressedTime;
@@ -82,51 +82,79 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        // Debug.Log(gameObject.transform.position.y);
         if (!isGameOver)
         {
 
             Move(5);
             Slide();
             // Jump(5);
-
-            if (IsGrounded() && Input.GetButtonDown("Jump"))
-            {
-                jumpBtnPressedTime = Time.time;
-                playerAnimator.SetBool("isGrounded",false);
-        isGround = false;
-                // playerAnimator.SetBool("isPlayerFall", false);
-
-               
-
-
-
-            }
-    if(Time.time - lastGroundedTime <= jumpBtnGracePeriod){
-        playerAnimator.SetBool("isGrounded",true);
-        isGround = true;
-        playerAnimator.SetBool("isPlayerJump", false);
-        isJump = false;
-        playerAnimator.SetBool("isPlayerFall",false);
-        isFall = false;
-        
-        if(Time.time - jumpBtnPressedTime <= jumpBtnGracePeriod){
-                rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce  * Time.deltaTime ;
+              if(IsGrounded() &&  Input.GetButtonDown("Jump")){
+                rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
                 playerAnimator.SetBool("isPlayerJump", true);
                 isJump = true;
-                jumpBtnPressedTime=null;
-                lastGroundedTime=null;
-        }
-      
-    }
-    else{
-        playerAnimator.SetBool("isGrounded",false);
-        isGround=false;
-        if(isJump && transform.position.y < 2 ){
-             playerAnimator.SetBool("isPlayerFall",true);
-            isFall = true;
-        }
-    }
-                if (Input.GetKey(KeyCode.Escape))
+                playerAnimator.SetBool("isGrounded", false);
+                isGround = false;
+            }       
+          
+            if(isJump){
+                if(gameObject.transform.position.y>=2){
+                 playerAnimator.SetBool("isPlayerJump", false);
+                isJump = false;
+                playerAnimator.SetBool("isPlayerFall", true);
+                isFall = true;
+               
+                }
+                else if(isFall){
+                  playerAnimator.SetBool("isGrounded", true);
+                isGround = true;
+            }
+            }
+          
+
+            // if(IsGrounded() && Input.GetButtonDown("Jump")){
+            //     playerAnimator.SetBool("isGrounded", false);
+            //     isGround = false;
+            // }else if(IsGrounded()){
+            //       playerAnimator.SetBool("isGrounded", true);
+            //     isGround = true;
+            // }
+
+            // if(!isGround){
+            //       rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
+            //     playerAnimator.SetBool("isPlayerJump", true);
+            //     isJump = true;
+            // }
+
+            // if(IsGrounded()){
+            //     playerAnimator.SetBool("isGrounded", true);
+            //     isGround = true;
+            // }
+            //  else if (IsGrounded() && Input.GetButtonDown("Jump"))
+            // {
+            //     playerAnimator.SetBool("isGrounded", false);
+            //     isGround = false;
+            //     rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
+            //     playerAnimator.SetBool("isPlayerJump", true);
+            //     isJump = true;
+            //     playerAnimator.SetBool("isPlayerFall", false);
+            //     isFall = false;
+
+
+            // }
+            // else if (isJump && gameObject.transform.position.y < 2)
+            // {
+            //     playerAnimator.SetBool("isPlayerFall", true);
+            //     isFall = true;
+            //     playerAnimator.SetBool("isPlayerJump", false);
+            //     isJump = false;
+            //     playerAnimator.SetBool("isGrounded", false);
+            // }
+        
+
+
+
+            if (Input.GetKey(KeyCode.Escape))
             {
                 if (!isPaused)
                 {
@@ -144,12 +172,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private bool IsGrounded(){
+    public bool IsGrounded()
+    {
         RaycastHit2D rayHitCast2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, 1f, platformLayerMask);
-        Debug.Log(rayHitCast2D.collider);
-
-        lastGroundedTime = Time.time;
-        
+        Debug.Log(rayHitCast2D.collider);       
         return rayHitCast2D.collider != null;
     }
     void OnTriggerEnter2D(Collider2D other)
@@ -176,10 +202,10 @@ public class PlayerController : MonoBehaviour
         {
 
             PlayerHurts(20);
-           
+
         }
     }
-    
+
     private void Rotate(float rotate, float rotationSpeed)
     {
 
@@ -193,21 +219,26 @@ public class PlayerController : MonoBehaviour
     private void Move(float movementSpeed)
     {
 
-        if(moveRight){
-        transform.position += new Vector3(movementSpeed,0,0) * Time.fixedDeltaTime;
-
-        }else if(!moveRight){
-        transform.position += new Vector3(-movementSpeed,0,0) * Time.fixedDeltaTime;
+        if (moveRight)
+        {
+            transform.position += new Vector3(movementSpeed, 0, 0) * Time.fixedDeltaTime;
 
         }
-         
-        if(Input.GetKey(KeyCode.D)){
+        else if (!moveRight)
+        {
+            transform.position += new Vector3(-movementSpeed, 0, 0) * Time.fixedDeltaTime;
+
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
             Debug.Log("pressed D");
             moveRight = true;
-            }
-        else if(Input.GetKey(KeyCode.A)){
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
             Debug.Log("pressed A");
-           moveRight = false;
+            moveRight = false;
 
         }
         movementX = Input.GetAxis("Horizontal");
@@ -220,7 +251,7 @@ public class PlayerController : MonoBehaviour
 
         //--------animation parts below----------
 
-        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX ) * movementSpeed);
+        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX) * movementSpeed);
 
     }
 
@@ -262,17 +293,17 @@ public class PlayerController : MonoBehaviour
 
         playerHealth -= damage;
         healthBar.SetHealth(playerHealth);
-        playerAnimator.SetBool("isPlayerHurt",true);
-         if (playerHealth <= 0)
-            {   
-                playerAnimator.SetBool("isPlayerHurt", false);
-                
-                playerAnimator.SetBool("isDead", true);
-                
+        playerAnimator.SetBool("isPlayerHurt", true);
+        if (playerHealth <= 0)
+        {
+            playerAnimator.SetBool("isPlayerHurt", false);
 
-                isGameOver = true;
-                return;
-            }
+            playerAnimator.SetBool("isDead", true);
+
+
+            isGameOver = true;
+            return;
+        }
 
     }
     void DoPlayerHurtAnimFalse()

@@ -11,7 +11,8 @@ public class PlayerController : MonoBehaviour
     private float movementY;
 
     [SerializeField]
-    private float playerSpeed, jumpForce = 70;
+    private float playerSpeed, jumpForce = 70, jumpHeight=2f;
+
 
 
     private Rigidbody2D rigidbody2D;
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         //boxCollider getting here :-
         boxCollider2D = transform.GetComponent<BoxCollider2D>();
         // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
@@ -77,6 +79,7 @@ public class PlayerController : MonoBehaviour
         gameOverMenu.SetActive(false);
         isPlayerHurts = false;
         isGameOver = false;
+        
     }
 
     // Update is called once per frame
@@ -90,26 +93,21 @@ public class PlayerController : MonoBehaviour
             Slide();
             // Jump(5);
               if(IsGrounded() &&  Input.GetButtonDown("Jump")){
+                isJump = true;
                 rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
                 playerAnimator.SetBool("isPlayerJump", true);
-                isJump = true;
-                playerAnimator.SetBool("isGrounded", false);
-                isGround = false;
-            }       
-          
-            if(isJump){
-                if(gameObject.transform.position.y>=2){
+            }else if(gameObject.transform.position.y >= jumpHeight){ // *jumpHeight*
+                 isJump = false;
                  playerAnimator.SetBool("isPlayerJump", false);
-                isJump = false;
-                playerAnimator.SetBool("isPlayerFall", true);
                 isFall = true;
-               
+                playerAnimator.SetBool("isPlayerFall", true);               
                 }
                 else if(isFall){
                   playerAnimator.SetBool("isGrounded", true);
                 isGround = true;
+                playerAnimator.SetBool("isPlayerFall",false);
             }
-            }
+            
           
 
             // if(IsGrounded() && Input.GetButtonDown("Jump")){

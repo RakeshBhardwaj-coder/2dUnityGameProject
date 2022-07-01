@@ -11,7 +11,8 @@ public class PlayerController : MonoBehaviour
     private float movementY;
 
     [SerializeField]
-    private float playerSpeed;
+    private float playerSpeed,jumpForce = 70;
+
 
     private Rigidbody2D rigidbody2D;
 
@@ -29,8 +30,11 @@ public class PlayerController : MonoBehaviour
     public bool isPlayerHurts;
     bool isPaused = false;
 
-    bool isJump = true;
-    float jumpForce = 5;
+    //Jumping variables
+    bool isJump;
+    bool isFall;
+    bool isGround;
+
 
     //Health Bar Variables
 
@@ -38,14 +42,23 @@ public class PlayerController : MonoBehaviour
     int playerMaxHealth = 100;
     [SerializeField] int playerHealth;
     public HealthBar healthBar;
-    public BoxCollider2D boxCollider2D;
+    BoxCollider2D boxCollider2D;
     public PolygonCollider2D polygonCollider2D;
+
+    public LayerMask platformLayerMask;
+
+    bool moveLeft, moveRight=true;
+
+    float? lastGroundedTime;
+    float? jumpBtnPressedTime;
+
+    public float jumpBtnGracePeriod;
 
     // Start is called before the first frame update
     void Start()
     {
         //boxCollider getting here :-
-        // boxCollider2D = gameObject.GetComponent<BoxCollider2D>();
+        boxCollider2D = transform.GetComponent<BoxCollider2D>();
         // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
         // polygonCollider2D.enabled = true;
         // boxCollider2D.enabled = true;
@@ -76,33 +89,44 @@ public class PlayerController : MonoBehaviour
             Slide();
             // Jump(5);
 
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.W))
+            if (IsGrounded() && Input.GetButtonDown("Jump"))
             {
-                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
+                jumpBtnPressedTime = Time.time;
+                playerAnimator.SetBool("isGrounded",false);
+        isGround = false;
+                // playerAnimator.SetBool("isPlayerFall", false);
+
+               
+
+
+
+            }
+    if(Time.time - lastGroundedTime <= jumpBtnGracePeriod){
+        playerAnimator.SetBool("isGrounded",true);
+        isGround = true;
+        playerAnimator.SetBool("isPlayerJump", false);
+        isJump = false;
+        playerAnimator.SetBool("isPlayerFall",false);
+        isFall = false;
+        
+        if(Time.time - jumpBtnPressedTime <= jumpBtnGracePeriod){
+                rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce  * Time.deltaTime ;
                 playerAnimator.SetBool("isPlayerJump", true);
-                isJump = false;
-                playerAnimator.SetBool("isPlayerFall", false);
-
-                // isJump = false;
-                // playerAnimator.SetBool("isPlayerFall",isJump);
-
-
-
-            }
-            else if (!isJump)
-            {
-                playerAnimator.SetBool("isPlayerJump", false);
-
-
-                //     isJump = true;
-                playerAnimator.SetBool("isPlayerFall", true);
-                // isJump = false;
-                // playerAnimator.SetBool("isPlayerJump",isJump);
-
-
-            }
-
-            if (Input.GetKey(KeyCode.Escape))
+                isJump = true;
+                jumpBtnPressedTime=null;
+                lastGroundedTime=null;
+        }
+      
+    }
+    else{
+        playerAnimator.SetBool("isGrounded",false);
+        isGround=false;
+        if(isJump && transform.position.y < 2 ){
+             playerAnimator.SetBool("isPlayerFall",true);
+            isFall = true;
+        }
+    }
+                if (Input.GetKey(KeyCode.Escape))
             {
                 if (!isPaused)
                 {
@@ -118,6 +142,15 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.identity;
         }
 
+    }
+
+    private bool IsGrounded(){
+        RaycastHit2D rayHitCast2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, 1f, platformLayerMask);
+        Debug.Log(rayHitCast2D.collider);
+
+        lastGroundedTime = Time.time;
+        
+        return rayHitCast2D.collider != null;
     }
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -159,11 +192,28 @@ public class PlayerController : MonoBehaviour
 
     private void Move(float movementSpeed)
     {
+
+        if(moveRight){
+        transform.position += new Vector3(movementSpeed,0,0) * Time.fixedDeltaTime;
+
+        }else if(!moveRight){
+        transform.position += new Vector3(-movementSpeed,0,0) * Time.fixedDeltaTime;
+
+        }
+         
+        if(Input.GetKey(KeyCode.D)){
+            Debug.Log("pressed D");
+            moveRight = true;
+            }
+        else if(Input.GetKey(KeyCode.A)){
+            Debug.Log("pressed A");
+           moveRight = false;
+
+        }
         movementX = Input.GetAxis("Horizontal");
         // movementY = Input.GetAxis("Vertical");
-        transform.position += new Vector3(playerSpeed,0,0) * Time.fixedDeltaTime * movementSpeed;
-         if (!Mathf.Approximately(0, movementX))
-         transform.position += movementX>0 ? new Vector3(playerSpeed, 0, 0) * Time.fixedDeltaTime * movementSpeed : new Vector3(-playerSpeed, 0, 0) * Time.fixedDeltaTime  * movementSpeed;
+        //  if (!Mathf.Approximately(0, movementX))
+        //  transform.position += movementX>0 ? new Vector3(movementSpeed, 0, 0) * Time.fixedDeltaTime   : new Vector3(-movementSpeed, 0, 0) * Time.fixedDeltaTime;
 
         if (!Mathf.Approximately(0, movementX))
             transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
@@ -176,7 +226,7 @@ public class PlayerController : MonoBehaviour
 
     private void Slide()
     {
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S))
         {
             playerAnimator.SetBool("isSlide", true);
         }

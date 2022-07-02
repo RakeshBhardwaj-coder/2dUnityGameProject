@@ -94,11 +94,6 @@ namespace UnityEngine.UI
         [SerializeField]
         protected LayerMask m_BlockingMask = kNoEventMaskSet;
 
-        /// <summary>
-        /// The type of objects specified through LayerMask that are checked to determine if they block graphic raycasts.
-        /// </summary>
-        public LayerMask blockingMask { get { return m_BlockingMask; } set { m_BlockingMask = value; } }
-
         private Canvas m_Canvas;
 
         protected GraphicRaycaster()
@@ -128,7 +123,7 @@ namespace UnityEngine.UI
             if (canvas == null)
                 return;
 
-            var canvasGraphics = GraphicRegistry.GetRaycastableGraphicsForCanvas(canvas);
+            var canvasGraphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
             if (canvasGraphics == null || canvasGraphics.Count == 0)
                 return;
 
@@ -303,13 +298,10 @@ namespace UnityEngine.UI
         {
             get
             {
-                var canvas = this.canvas;
-                var renderMode = canvas.renderMode;
-                if (renderMode == RenderMode.ScreenSpaceOverlay
-                    || (renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera == null))
+                if (canvas.renderMode == RenderMode.ScreenSpaceOverlay || (canvas.renderMode == RenderMode.ScreenSpaceCamera && canvas.worldCamera == null))
                     return null;
 
-                return canvas.worldCamera ?? Camera.main;
+                return canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
             }
         }
 
@@ -329,7 +321,7 @@ namespace UnityEngine.UI
                 if (!graphic.raycastTarget || graphic.canvasRenderer.cull || graphic.depth == -1)
                     continue;
 
-                if (!RectTransformUtility.RectangleContainsScreenPoint(graphic.rectTransform, pointerPosition, eventCamera, graphic.raycastPadding))
+                if (!RectTransformUtility.RectangleContainsScreenPoint(graphic.rectTransform, pointerPosition, eventCamera))
                     continue;
 
                 if (eventCamera != null && eventCamera.WorldToScreenPoint(graphic.rectTransform.position).z > eventCamera.farClipPlane)

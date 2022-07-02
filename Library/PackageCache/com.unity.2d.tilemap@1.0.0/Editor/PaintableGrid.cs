@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace UnityEditor.Tilemaps
 {
@@ -50,7 +49,7 @@ namespace UnityEditor.Tilemaps
         protected Vector2Int? m_MarqueeStart;
         private MarqueeType m_MarqueeType = MarqueeType.None;
         private bool m_IsExecuting;
-        private Type m_TypeBeforeExecution;
+        private Type m_TypeBeforePicking;
         private int m_ZPosition;
 
         public Vector2Int mouseGridPosition { get { return m_MouseGridPosition; } }
@@ -191,10 +190,10 @@ namespace UnityEditor.Tilemaps
 
             if (evt.type == EventType.MouseDown && IsPickingEvent(evt) && !isHotControl)
             {
-                m_TypeBeforeExecution = typeof(PaintTool);
+                m_TypeBeforePicking = typeof(PaintTool);
                 if (inEditMode && !TilemapEditorTool.IsActive(typeof(PickingTool)))
                 {
-                    m_TypeBeforeExecution = UnityEditor.EditorTools.ToolManager.activeToolType;
+                    m_TypeBeforePicking = EditorTools.EditorTools.activeToolType;
                     TilemapEditorTool.SetActiveEditorTool(typeof(PickingTool));
                 }
 
@@ -222,18 +221,18 @@ namespace UnityEditor.Tilemaps
                     Vector2Int pivot = GetMarqueePivot(m_MarqueeStart.Value, mouseGridPosition);
                     PickBrush(new BoundsInt(new Vector3Int(rect.xMin, rect.yMin, zPosition), new Vector3Int(rect.size.x, rect.size.y, 1)), new Vector3Int(pivot.x, pivot.y, 0));
 
-                    if (inEditMode && UnityEditor.EditorTools.ToolManager.activeToolType != m_TypeBeforeExecution)
+                    if (inEditMode && EditorTools.EditorTools.activeToolType != m_TypeBeforePicking)
                     {
                         if (PickingIsDefaultTool()
-                            && (m_TypeBeforeExecution == typeof(EraseTool)
-                                || m_TypeBeforeExecution == typeof(MoveTool)))
+                            && (m_TypeBeforePicking == typeof(EraseTool)
+                                || m_TypeBeforePicking == typeof(MoveTool)))
                         {
                             // If Picking is default, change to a Paint Tool to facilitate editing if previous tool does not allow for painting
                             TilemapEditorTool.SetActiveEditorTool(typeof(PaintTool));
                         }
                         else
                         {
-                            TilemapEditorTool.SetActiveEditorTool(m_TypeBeforeExecution);
+                            TilemapEditorTool.SetActiveEditorTool(m_TypeBeforePicking);
                         }
                     }
 
@@ -361,7 +360,6 @@ namespace UnityEditor.Tilemaps
                     RegisterUndo();
                     GUIUtility.hotControl = m_PermanentControlID;
                     executing = true;
-                    m_TypeBeforeExecution = EditorTools.ToolManager.activeToolType;
                     if (IsErasingEvent(evt))
                     {
                         if (!TilemapEditorTool.IsActive(typeof(EraseTool)))
@@ -385,21 +383,12 @@ namespace UnityEditor.Tilemaps
                         if (points[0] == mouseGridPosition)
                             points.Reverse();
 
-                        if (!evt.shift && !TilemapEditorTool.IsActive(typeof(PaintTool)) && m_TypeBeforeExecution == typeof(PaintTool))
-                            TilemapEditorTool.SetActiveEditorTool(typeof(PaintTool));
-                        else if (evt.shift && TilemapEditorTool.IsActive(typeof(PaintTool)))
-                            TilemapEditorTool.SetActiveEditorTool(typeof(EraseTool));
-
                         for (int i = 1; i < points.Count; i++)
                         {
                             if (IsErasingEvent(evt))
-                            {
                                 Erase(new Vector3Int(points[i].x, points[i].y, zPosition));
-                            }
                             else
-                            {
                                 Paint(new Vector3Int(points[i].x, points[i].y, zPosition));
-                            }
                         }
                         Event.current.Use();
                         GUI.changed = true;
@@ -409,10 +398,8 @@ namespace UnityEditor.Tilemaps
                     executing = false;
                     if (isHotControl)
                     {
-                        if (!TilemapEditorTool.IsActive(typeof(PaintTool)) && m_TypeBeforeExecution == typeof(PaintTool))
-                        {
+                        if (Event.current.shift && !TilemapEditorTool.IsActive(typeof(PaintTool)))
                             TilemapEditorTool.SetActiveEditorTool(typeof(PaintTool));
-                        }
 
                         Event.current.Use();
                         GUI.changed = true;
@@ -531,8 +518,8 @@ namespace UnityEditor.Tilemaps
 
         public static bool InGridEditMode()
         {
-            return UnityEditor.EditorTools.ToolManager.activeToolType != null
-                && UnityEditor.EditorTools.ToolManager.activeToolType.IsSubclassOf(typeof(TilemapEditorTool));
+            return EditorTools.EditorTools.activeToolType != null
+                && EditorTools.EditorTools.activeToolType.IsSubclassOf(typeof(TilemapEditorTool));
         }
 
         // TODO: Someday EditMode or its future incarnation will be public and we can get rid of this

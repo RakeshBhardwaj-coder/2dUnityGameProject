@@ -42,13 +42,6 @@ namespace UnityEditor.Tilemaps
         [HideInInspector]
         private bool m_CanChangeZPosition;
 
-        [SerializeField]
-        private bool m_FloodFillContiguousOnly = true;
-
-        private Vector3Int m_StoredSize;
-        private Vector3Int m_StoredPivot;
-        private BrushCell[] m_StoredCells;
-
         private ArrayList m_Locations;
         private ArrayList m_Tiles;
 
@@ -216,36 +209,21 @@ namespace UnityEditor.Tilemaps
             if (map == null)
                 return;
 
-            if (m_FloodFillContiguousOnly)
-            {
-                map.FloodFill(position, cells[0].tile);
-            }
-            else
-            {
-                var tile = map.GetTile(position);
-                if (tile != null && tile != cells[0].tile)
-                {
-                    map.SwapTile(tile, cells[0].tile);
-                }
-                else
-                {
-                    map.FloodFill(position, cells[0].tile);
-                }
-            }
+            map.FloodFill(position, cells[0].tile);
         }
 
         /// <summary>Rotates the brush by 90 degrees in the given direction.</summary>
         /// <param name="direction">Direction to rotate by.</param>
         /// <param name="layout">Cell Layout for rotating.</param>
-        public override void Rotate(RotationDirection direction, GridLayout.CellLayout layout)
+        public override void Rotate(RotationDirection direction, Grid.CellLayout layout)
         {
             switch (layout)
             {
                 case GridLayout.CellLayout.Hexagon:
                     RotateHexagon(direction);
                     break;
-                case GridLayout.CellLayout.Isometric:
-                case GridLayout.CellLayout.IsometricZAsY:
+                case Grid.CellLayout.Isometric:
+                case Grid.CellLayout.IsometricZAsY:
                 case GridLayout.CellLayout.Rectangle:
                 {
                     Vector3Int oldSize = m_Size;
@@ -389,51 +367,18 @@ namespace UnityEditor.Tilemaps
             SetColor(brushPosition, tilemap.GetColor(position));
         }
 
-        private void StoreCells()
-        {
-            m_StoredSize = m_Size;
-            m_StoredPivot = m_Pivot;
-            if (m_Cells != null)
-            {
-                m_StoredCells = new BrushCell[m_Cells.Length];
-                for (int i = 0; i < m_Cells.Length; ++i)
-                {
-                    m_StoredCells[i] = m_Cells[i];
-                }
-            }
-            else
-            {
-                m_StoredCells = new BrushCell[0];
-            }
-        }
-
-        private void RestoreCells()
-        {
-            m_Size = m_StoredSize;
-            m_Pivot = m_StoredPivot;
-            if (m_StoredCells != null)
-            {
-                m_Cells = new BrushCell[m_StoredCells.Length];
-                for (int i = 0; i < m_StoredCells.Length; ++i)
-                {
-                    m_Cells[i] = m_StoredCells[i];
-                }
-            }
-        }
-
         /// <summary>MoveStart is called when user starts moving the area previously selected with the selection marquee.</summary>
         /// <param name="gridLayout">Grid used for layout.</param>
         /// <param name="brushTarget">Target of the move operation. By default the currently selected GameObject.</param>
         /// <param name="position">Position where the move operation has started.</param>
         public override void MoveStart(GridLayout gridLayout, GameObject brushTarget, BoundsInt position)
         {
+            Reset();
+            UpdateSizeAndPivot(new Vector3Int(position.size.x, position.size.y, 1), Vector3Int.zero);
+
             Tilemap tilemap = brushTarget.GetComponent<Tilemap>();
             if (tilemap == null)
                 return;
-
-            StoreCells();
-            Reset();
-            UpdateSizeAndPivot(new Vector3Int(position.size.x, position.size.y, 1), Vector3Int.zero);
 
             foreach (Vector3Int pos in position.allPositionsWithin)
             {
@@ -451,7 +396,6 @@ namespace UnityEditor.Tilemaps
         {
             Paint(gridLayout, brushTarget, position.min);
             Reset();
-            RestoreCells();
         }
 
         /// <summary>Clears all data of the brush.</summary>
@@ -460,7 +404,7 @@ namespace UnityEditor.Tilemaps
             UpdateSizeAndPivot(Vector3Int.one, Vector3Int.zero);
         }
 
-        private void FlipX(GridLayout.CellLayout layout)
+        private void FlipX(Grid.CellLayout layout)
         {
             BrushCell[] oldCells = m_Cells.Clone() as BrushCell[];
             BoundsInt oldBounds = new BoundsInt(Vector3Int.zero, m_Size);
@@ -478,7 +422,7 @@ namespace UnityEditor.Tilemaps
             FlipCells(ref m_Cells, new Vector3(-1f, 1f, 1f), layout == GridLayout.CellLayout.Hexagon);
         }
 
-        private void FlipY(GridLayout.CellLayout layout)
+        private void FlipY(Grid.CellLayout layout)
         {
             BrushCell[] oldCells = m_Cells.Clone() as BrushCell[];
             BoundsInt oldBounds = new BoundsInt(Vector3Int.zero, m_Size);
@@ -635,7 +579,7 @@ namespace UnityEditor.Tilemaps
 
             public override int GetHashCode()
             {
-                int hash;
+                int hash = 0;
                 unchecked
                 {
                     hash = tile != null ? tile.GetInstanceID() : 0;

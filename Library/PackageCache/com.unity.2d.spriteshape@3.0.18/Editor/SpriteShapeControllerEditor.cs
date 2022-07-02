@@ -350,7 +350,7 @@ namespace UnityEditor.U2D
             EditorGUILayout.PropertyField(m_SpriteShapeProp, Contents.spriteShapeProfile);
 
             var hasEditToolChanged = DoEditButtonChecked<SpriteShapeEditorTool>(PathEditorToolContents.icon, Contents.editSplineLabel);
-            if (hasEditToolChanged && !UnityEditor.EditorTools.ToolManager.activeToolType.Equals(typeof(SpriteShapeEditorTool)))
+            if (hasEditToolChanged && !EditorTools.EditorTools.activeToolType.Equals(typeof(SpriteShapeEditorTool)))
                 SpriteShapeUpdateCache.UpdateCache(targets);
 
             DoPathInspector<SpriteShapeEditorTool>();
@@ -415,7 +415,7 @@ namespace UnityEditor.U2D
                 EditorGUILayout.PropertyField(m_OptimizeGeometryProp, Contents.optimizeGeometryLabel);
             EditorGUILayout.PropertyField(m_EnableTangentsProp, Contents.enableTangentsLabel);
 
-            if (UnityEditor.EditorTools.ToolManager.activeToolType == typeof(SpriteShapeEditorTool))
+            if (EditorTools.EditorTools.activeToolType == typeof(SpriteShapeEditorTool))
             {
                 // Cache Geometry is only editable for Scene Objects or when in Prefab Isolation Mode. 
                 if (Selection.gameObjects.Length == 1 && Selection.transforms.Contains(Selection.gameObjects[0].transform))
@@ -532,7 +532,7 @@ namespace UnityEditor.U2D
         [DrawGizmo(GizmoType.InSelectionHierarchy)]
         static void RenderSpline(SpriteShapeController m_SpriteShapeController, GizmoType gizmoType)
         {
-            if (UnityEditor.EditorTools.ToolManager.activeToolType == typeof(SpriteShapeEditorTool))
+            if (EditorTools.EditorTools.activeToolType == typeof(SpriteShapeEditorTool))
                 return;
 
             var m_Spline = m_SpriteShapeController.spline;

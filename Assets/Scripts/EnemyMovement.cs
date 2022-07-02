@@ -4,42 +4,47 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
+    PlayerController playerController;
     public GameObject pointB;
     public GameObject pointA;
-    public GameObject enemy;
+    public GameObject player;
     public float maxSpeed = 3;
     public bool keyHit = false;
-    public bool keyHit2 = false;
-    public bool keyHit3 = false;
     // Start is called before the first frame update
     void Start()
     {
-    enemy.transform.position = pointA.transform.position;
+        gameObject.transform.position = pointA.transform.position;
+        playerController = player.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-            if (enemy.transform.position == pointA.transform.position)
+        if (gameObject.transform.position == pointA.transform.position)
         {
             keyHit = true;
 
         }
         if (keyHit == true)
         {
-            keyHit2 = false;
+            // keyHit2 = false;
             var change = maxSpeed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, pointB.transform.position, change);
         }
-        if (enemy.transform.position == pointB.transform.position)
+        if (gameObject.transform.position == pointB.transform.position)
         {
-            keyHit2 = true;
-        }
-        if (keyHit2 == true)
-        {
+            // keyHit2 = true;
             keyHit = false;
+        }
+        if (keyHit == false)
+        {
+            // keyHit = false;
             var change2 = maxSpeed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, pointA.transform.position, change2);
         }
-       }
+
+        // if(playerController.isGameOver){
+        //     transform.position = new Vector3(0,player.transform.position.y,0);
+        //     }
     }
+}

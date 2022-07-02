@@ -5,98 +5,123 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed;
-    float rateOfAcceleration = .05f;
-    public float acceleration;
-    public Rigidbody2D rigidBody2D;
-    public GameObject uiMenu;
-    public GameObject pausedMenu;
-    public GameObject gameOverMenu;
+    [SerializeField]
+    private Animator playerAnimator;
+    private float movementX;
+    private float movementY;
+
+    [SerializeField]
+    private float playerSpeed, jumpForce = 70, jumpHeight = 2f;
+
+
+
+    private Rigidbody2D rigidbody2D;
+
+    [SerializeField]
+    private GameObject levelCompleted, pausedMenu, gameOverMenu;
     public Animator doorAnimator;
 
-    public AudioSource damageSound;
+    [SerializeField]
+    private AudioSource damageSound, slidingDoorSound;
 
 
 
     bool isGetDoor;
     public bool isGameOver;
+    public bool isPlayerHurts;
     bool isPaused = false;
+
+    //Jumping variables
+    bool isJump;
+    bool isFall;
+    bool isGround;
+
+
+    //Health Bar Variables
+
+    public int healthDamage;
+    int playerMaxHealth = 100;
+    [SerializeField] int playerHealth;
+    public HealthBar healthBar;
+    BoxCollider2D boxCollider2D;
+    public PolygonCollider2D polygonCollider2D;
+
+    public LayerMask platformLayerMask;
+
+    bool moveLeft, moveRight = true;
+
+    float? lastGroundedTime;
+    float? jumpBtnPressedTime;
+
+    public float jumpBtnGracePeriod;
+
     // Start is called before the first frame update
     void Start()
     {
-        uiMenu.SetActive(false);
+
+        //boxCollider getting here :-
+        boxCollider2D = transform.GetComponent<BoxCollider2D>();
+        // polygonCollider2D = gameObject.GetComponent<PolygonCollider2D>();
+        // polygonCollider2D.enabled = true;
+        // boxCollider2D.enabled = true;
+        //health bar managing:-
+        playerHealth = playerMaxHealth;
+        healthBar.SetMaxHealth(playerMaxHealth);
+        // set the palyer health 100 when start the game
+        // takeDamage = GameObjet.Find("").GetComponent<TakeDamage>();
+        // takeDamage = saw.GetComponent<TakeDamage>();
+
+        rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+
+
+        levelCompleted.SetActive(false);
         pausedMenu.SetActive(false);
         gameOverMenu.SetActive(false);
+        isPlayerHurts = false;
         isGameOver = false;
-        damageSound = GetComponent<AudioSource>();
-
-
 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
-
-
-        if (Input.GetKey(KeyCode.Escape))
+        // Debug.Log(gameObject.transform.position.y);
+        if (!isGameOver)
         {
-            if (!isPaused)
+
+            Move(5);
+            Slide();
+            Jump();
+
+
+
+
+            if (Input.GetKey(KeyCode.Escape))
             {
-                Pause();
-                pausedMenu.SetActive(true);
+                if (!isPaused)
+                {
+                    Pause();
+                    pausedMenu.SetActive(true);
+                }
             }
-        }
 
-        if (isGameOver)
+        }
+        else
         {
-            rigidBody2D.velocity = new Vector2(0f, 0f);
-
-            return;
+            Move(0);
+            transform.rotation = Quaternion.identity;
         }
 
-        if (Input.GetAxis("Horizontal") > 0)
-        {
-            acceleration *= acceleration * rateOfAcceleration;
-            speed += acceleration * Time.deltaTime;
-            rigidBody2D.velocity = new Vector2(speed, 0f);
-        }
-        else if (Input.GetAxis("Horizontal") < 0)
-        {
-            acceleration *= acceleration * rateOfAcceleration;
+    }
 
-            speed += acceleration * Time.deltaTime;
-            rigidBody2D.velocity = new Vector2(-speed, 0f);
+    public bool IsGrounded()
+    {
+        // RaycastHit2D rayHitCast2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, 1f, platformLayerMask);
+        // Debug.Log(rayHitCast2D.collider);
+        // return rayHitCast2D.collider != null;
 
-        }
-        else if (Input.GetAxis("Vertical") < 0)
-        {
-            acceleration *= acceleration * rateOfAcceleration;
-
-            speed += acceleration * Time.deltaTime;
-            rigidBody2D.velocity = new Vector2(0f, -speed);
-
-        }
-        else if (Input.GetAxis("Vertical") > 0)
-        {
-            acceleration *= acceleration * rateOfAcceleration;
-
-            speed += acceleration * Time.deltaTime;
-            rigidBody2D.velocity = new Vector2(0f, speed);
-
-        }
-        else if (Input.GetAxis("Horizontal") == 0 || Input.GetAxis("Vertical") == 0)
-        {
-            rigidBody2D.velocity = new Vector2(0f, 0f);
-
-        }
-        if (Input.GetKey("space"))
-        {
-            rigidBody2D.velocity = new Vector2(0f, 0f);
-
-        }
-
+        // this is new method using other script
+        return transform.Find("GroundCheck").GetComponent<GroundCheck>().isGrounded;
     }
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -105,18 +130,104 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log("Level Completed!!!");
 
-            uiMenu.SetActive(true);
-            isGameOver = true;
+            levelCompleted.SetActive(true);
+            // isPlayerHurts = true;
 
 
-        }else if(other.tag=="Door"){
-        doorAnimator.SetBool("playerChecked",true); // if player checked is true door will open.
+        }
+        else if (other.tag == "Door")
+        {
+            doorAnimator.SetBool("DoorColorYellow", true);
+            doorAnimator.SetBool("DoorOpen", true); // if player checked is true door will open.
 
+            //-------Audio--------
+            slidingDoorSound.Play();
         }
         else if (other.tag == "Enemy")
         {
-            // rigidBody2D.velocity = new Vector2(0f, 0f);
-            GameOver();
+
+            PlayerHurts(20);
+
+        }
+    }
+
+    private void Rotate(float rotate, float rotationSpeed)
+    {
+
+        transform.Rotate(0, 0, -rotate * rotationSpeed);
+        // Rotaion in 3d
+        // Vector3 vector = new Vector3(0f, rotate * rotationSpeed, 0f);
+        // Quternion deltaRotation = Quaternion.Euler(vector * Time.deltaTime);
+        // rigidBody3D.MoveRotation(rigidBody3D.rotation * deltaRotation);
+    }
+
+    private void Move(float movementSpeed)
+    {
+
+        if (moveRight)
+        {
+            transform.position += new Vector3(movementSpeed, 0, 0) * Time.fixedDeltaTime;
+
+        }
+        else if (!moveRight)
+        {
+            transform.position += new Vector3(-movementSpeed, 0, 0) * Time.fixedDeltaTime;
+
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            Debug.Log("pressed D");
+            moveRight = true;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            Debug.Log("pressed A");
+            moveRight = false;
+
+        }
+        movementX = Input.GetAxis("Horizontal");
+
+        if (!Mathf.Approximately(0, movementX))
+            transform.rotation = movementX > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
+
+        //--------animation parts below----------
+
+        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX) * movementSpeed);
+
+    }
+    private void Jump()
+    {
+        if (IsGrounded() && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)))
+        {
+            isJump = true;
+            rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
+            playerAnimator.SetBool("isPlayerJump", true);
+        }
+        else if (gameObject.transform.position.y >= jumpHeight)
+        { // *jumpHeight*
+            isJump = false;
+            playerAnimator.SetBool("isPlayerJump", false);
+            isFall = true;
+            playerAnimator.SetBool("isPlayerFall", true);
+        }
+        else if (isFall)
+        {
+            playerAnimator.SetBool("isGrounded", true);
+            isGround = true;
+            playerAnimator.SetBool("isPlayerFall", false);
+        }
+    }
+
+    private void Slide()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            playerAnimator.SetBool("isSlide", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("isSlide", false);
 
         }
     }
@@ -133,9 +244,41 @@ public class PlayerController : MonoBehaviour
     }
     public void GameOver()
     {
+        isGameOver = true;
         damageSound.Play();
         gameOverMenu.SetActive(true);
-        isGameOver = true;
+        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
+
+    }
+    public void PlayerHurts(int damage)
+    {
+
+        damageSound.Play();
+
+        playerHealth -= damage;
+        healthBar.SetHealth(playerHealth);
+        playerAnimator.SetBool("isPlayerHurt", true);
+        if (playerHealth <= 0)
+        {
+            playerAnimator.SetBool("isPlayerHurt", false);
+
+            playerAnimator.SetBool("isDead", true);
+
+
+            isGameOver = true;
+            return;
+        }
+
+    }
+    void DoPlayerHurtAnimFalse()
+    {
+        playerAnimator.SetBool("isPlayerHurt", false);
+
+    }
+    void DoPlayerDeadAnimFalse()
+    {
+        playerAnimator.SetBool("isDead", false);
+
     }
     public void RestartGame()
     {
@@ -145,10 +288,26 @@ public class PlayerController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+    public void Distroy()
+    {
+        Destroy(gameObject);
+    }
 
     public void Quit()
     {
-
         Application.Quit(0);
+    }
+
+    public void EnableInvincible()
+    {
+        // boxCollider2D.enabled = true;
+        // polygonCollider2D.enabled = true;
+        PlayerHurts(1);
+    }
+    public void DisableInvincible()
+    {
+        // boxCollider2D.enabled = false;
+        // polygonCollider2D.enabled = false;
+        PlayerHurts(0);
     }
 }

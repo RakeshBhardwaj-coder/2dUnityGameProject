@@ -116,9 +116,12 @@ public class PlayerController : MonoBehaviour
 
     public bool IsGrounded()
     {
-        RaycastHit2D rayHitCast2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, 1f, platformLayerMask);
-        Debug.Log(rayHitCast2D.collider);
-        return rayHitCast2D.collider != null;
+        // RaycastHit2D rayHitCast2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, 1f, platformLayerMask);
+        // Debug.Log(rayHitCast2D.collider);
+        // return rayHitCast2D.collider != null;
+
+        // this is new method using other script
+        return transform.Find("GroundCheck").GetComponent<GroundCheck>().isGrounded;
     }
     void OnTriggerEnter2D(Collider2D other)
     {

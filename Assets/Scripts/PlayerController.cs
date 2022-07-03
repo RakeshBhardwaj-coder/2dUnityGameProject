@@ -200,22 +200,23 @@ public class PlayerController : MonoBehaviour
     {
         if (IsGrounded() && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)))
         {
+            Debug.Log("W is pressed");
             isJump = true;
             rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
             playerAnimator.SetBool("isPlayerJump", true);
         }
-        else if (gameObject.transform.position.y >= jumpHeight)
-        { // *jumpHeight*
-            isJump = false;
-            playerAnimator.SetBool("isPlayerJump", false);
-            isFall = true;
-            playerAnimator.SetBool("isPlayerFall", true);
-        }
-        else if (isFall)
+        // else if (gameObject.transform.position.y >= jumpHeight)
+        // { // *jumpHeight*
+        //     isJump = false;
+        //     playerAnimator.SetBool("isPlayerJump", false);
+        //     isFall = true;
+        //     playerAnimator.SetBool("isPlayerFall", true);
+        // }
+        else if (isJump && IsGrounded())
         {
             playerAnimator.SetBool("isGrounded", true);
             isGround = true;
-            playerAnimator.SetBool("isPlayerFall", false);
+            playerAnimator.SetBool("isPlayerJump", false);
         }
     }
 

@@ -32,9 +32,21 @@ public class PlayerController : MonoBehaviour
     bool isPaused = false;
 
     //Jumping variables
+    [Header("Jump")]
     bool isJump;
     bool isFall;
     bool isGround;
+
+    // Wall Jump
+   [Header("Wall Jump")]
+   public float wallJumpTime = .2f;
+   public float wallSlideTime = .2f;
+   public float wallDistance = .2f;
+   bool isWallSliding = false;
+   bool isFaceRight;
+   RaycastHit2D wallRaycastCheckHit;
+   public LayerMask wallLayer;
+   float jumpTime;
 
 
     //Health Bar Variables
@@ -79,6 +91,7 @@ public class PlayerController : MonoBehaviour
         gameOverMenu.SetActive(false);
         isPlayerHurts = false;
         isGameOver = false;
+       
 
     }
 
@@ -103,6 +116,30 @@ public class PlayerController : MonoBehaviour
                     Pause();
                     pausedMenu.SetActive(true);
                 }
+            }
+
+
+            //Wall Jump
+            if(isFaceRight){
+                wallRaycastCheckHit = Physics2D.Raycast(transform.position, new Vector2(wallDistance,0),wallDistance,platformLayerMask);
+                Debug.DrawRay(transform.position, new Vector2(wallDistance,0),Color.red);
+            }else{
+                wallRaycastCheckHit = Physics2D.Raycast(transform.position, new Vector2(-wallDistance,0),wallDistance,platformLayerMask);
+                Debug.DrawRay(transform.position, new Vector2(-wallDistance,0),Color.red);
+
+            }
+
+            if(wallRaycastCheckHit && !IsGrounded()){
+                isWallSliding = true;
+                Debug.Log("isWallSlideing is ture borm");
+                jumpTime = Time.time + wallJumpTime;
+                               
+            }else if (jumpTime<Time.time){
+                isWallSliding  = false;
+
+            }
+            if(isWallSliding){
+                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,Mathf.Clamp(rigidbody2D.velocity.y, wallSlideTime,float.MaxValue));
             }
 
         }
@@ -164,11 +201,13 @@ public class PlayerController : MonoBehaviour
         if (moveRight)
         {
             transform.position += new Vector3(movementSpeed, 0, 0) * Time.fixedDeltaTime;
+            isFaceRight = true;
 
         }
         else if (!moveRight)
         {
             transform.position += new Vector3(-movementSpeed, 0, 0) * Time.fixedDeltaTime;
+            isFaceRight = false;
 
         }
 
@@ -195,7 +234,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Jump()
     {
-        if (IsGrounded() && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)))
+        if (IsGrounded() && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)) || (isWallSliding && Input.GetButtonDown("Jump")))
         {
             isJump = true;
             rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;

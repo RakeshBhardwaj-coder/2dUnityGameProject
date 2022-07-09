@@ -1,0 +1,336 @@
+fileFormatVersion: 2
+guid: 82be9d2d267e7a1b09163763a9b9a55a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 228352389554101767
+    second: CatPsdNew_0
+  - first:
+      213: -6007034597858475212
+    second: CatPsdNew_1
+  - first:
+      213: -1668370448021134745
+    second: CatPsdNew_2
+  - first:
+      213: -7307232115862896121
+    second: CatPsdNew_3
+  - first:
+      213: -4104173220663055601
+    second: CatPsdNew_4
+  - first:
+      213: 2540804982816362065
+    second: CatPsdNew_5
+  - first:
+      213: 6544209812742750726
+    second: CatPsdNew_6
+  - first:
+      213: 5836473882941736741
+    second: CatPsdNew_7
+  - first:
+      213: 390713826871337358
+    second: CatPsdNew_8
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 800, y: 86, z: 688, w: 79}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CatPsdNew_0
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 658
+        width: 170
+        height: 262
+      alignment: 9
+      pivot: {x: 0.66201174, y: 0.1459043}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70edbf6d9454b2300800000000000000
+      internalID: 228352389554101767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_1
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 552
+        width: 452
+        height: 336
+      alignment: 9
+      pivot: {x: 0.53633237, y: 0.061738152}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4330a212cd9b2aca0800000000000000
+      internalID: -6007034597858475212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_2
+      rect:
+        serializedVersion: 2
+        x: 1597
+        y: 634
+        width: 172
+        height: 237
+      alignment: 9
+      pivot: {x: 0.3340844, y: 0.1578246}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 762e0fbbae1c8d8e0800000000000000
+      internalID: -1668370448021134745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_3
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 380
+        width: 109
+        height: 97
+      alignment: 9
+      pivot: {x: 0.8647651, y: 0.90989166}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7028aa22b1f779a90800000000000000
+      internalID: -7307232115862896121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_4
+      rect:
+        serializedVersion: 2
+        x: 1230
+        y: 303
+        width: 144
+        height: 212
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0b25bd533c0b07c0800000000000000
+      internalID: -4104173220663055601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_5
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 370
+        width: 100
+        height: 106
+      alignment: 9
+      pivot: {x: 0.18883666, y: 0.9077056}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15ecf4c8ba0c24320800000000000000
+      internalID: 2540804982816362065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_6
+      rect:
+        serializedVersion: 2
+        x: 1036
+        y: 228
+        width: 146
+        height: 133
+      alignment: 9
+      pivot: {x: 0.8256058, y: 0.2335501}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6024828e624b1da50800000000000000
+      internalID: 6544209812742750726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_7
+      rect:
+        serializedVersion: 2
+        x: 1228
+        y: 101
+        width: 78
+        height: 144
+      alignment: 9
+      pivot: {x: 0.6218919, y: 0.8661426}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5274695d2125ff050800000000000000
+      internalID: 5836473882941736741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CatPsdNew_8
+      rect:
+        serializedVersion: 2
+        x: 1315
+        y: 101
+        width: 86
+        height: 142
+      alignment: 9
+      pivot: {x: 0.34924173, y: 0.8591256}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e81ef7bc7281c6500800000000000000
+      internalID: 390713826871337358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

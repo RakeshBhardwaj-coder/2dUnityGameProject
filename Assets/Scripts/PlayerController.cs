@@ -102,10 +102,11 @@ public class PlayerController : MonoBehaviour
         if (!isGameOver)
         {
 
-            Move(5);
+            if(!wallRaycastCheckHit){
+                Move(10);
+            }
             Slide();
             Jump();
-
 
 
 
@@ -127,6 +128,9 @@ public class PlayerController : MonoBehaviour
                 wallRaycastCheckHit = Physics2D.Raycast(transform.position, new Vector2(-wallDistance,0),wallDistance,platformLayerMask);
                 Debug.DrawRay(transform.position, new Vector2(-wallDistance,0),Color.red);
 
+            }
+            if(wallRaycastCheckHit){
+                Move(0);
             }
 
             if(wallRaycastCheckHit && !IsGrounded()){
@@ -198,30 +202,21 @@ public class PlayerController : MonoBehaviour
     private void Move(float movementSpeed)
     {
 
-        if (moveRight)
+        if (Input.GetKey(KeyCode.D))
         {
+            // rigidbody2D.AddForce(Vector2.right * move * Time.deltaTime);
             transform.position += new Vector3(movementSpeed, 0, 0) * Time.fixedDeltaTime;
             isFaceRight = true;
 
         }
-        else if (!moveRight)
+        else if (Input.GetKey(KeyCode.A))
         {
             transform.position += new Vector3(-movementSpeed, 0, 0) * Time.fixedDeltaTime;
             isFaceRight = false;
 
         }
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            Debug.Log("pressed D");
-            moveRight = true;
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            Debug.Log("pressed A");
-            moveRight = false;
-
-        }
+ 
         movementX = Input.GetAxis("Horizontal");
 
         if (!Mathf.Approximately(0, movementX))
@@ -229,41 +224,39 @@ public class PlayerController : MonoBehaviour
 
         //--------animation parts below----------
 
-        playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX) * movementSpeed);
+        // playerAnimator.SetFloat("playerSpeed", Mathf.Abs(movementX) * movementSpeed);
 
     }
-    private void Jump()
+     void Jump()
     {
-        if (IsGrounded() && (Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W)) || (isWallSliding && Input.GetButtonDown("Jump")))
-        {
-            isJump = true;
-            rigidbody2D.velocity = new Vector2(0, 1f) * jumpForce * Time.deltaTime;
-            playerAnimator.SetBool("isPlayerJump", true);
-        }
-        else if (gameObject.transform.position.y >= jumpHeight)
-        { // *jumpHeight*
-            isJump = false;
-            playerAnimator.SetBool("isPlayerJump", false);
-            isFall = true;
-            playerAnimator.SetBool("isPlayerFall", true);
-        }
-        else if (isFall)
-        {
-            playerAnimator.SetBool("isGrounded", true);
-            isGround = true;
-            playerAnimator.SetBool("isPlayerFall", false);
-        }
+          if(Input.GetKeyDown(KeyCode.Space)){
+                rigidbody2D.velocity = new Vector2(0,1f) * jumpForce * Time.fixedDeltaTime;
+            }
+
+        // else if (gameObject.transform.position.y >= jumpHeight)
+        // { // *jumpHeight*
+        //     isJump = false;
+        //     // playerAnimator.SetBool("isPlayerJump", false);
+        //     isFall = true;
+        //     // playerAnimator.SetBool("isPlayerFall", true);
+        // }
+        // else if (isFall)
+        // {
+        //     // playerAnimator.SetBool("isGrounded", true);
+        //     isGround = true;
+        //     // playerAnimator.SetBool("isPlayerFall", false);
+        // }
     }
 
     private void Slide()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            playerAnimator.SetBool("isSlide", true);
+            // playerAnimator.SetBool("isSlide", true);
         }
         else
         {
-            playerAnimator.SetBool("isSlide", false);
+            // playerAnimator.SetBool("isSlide", false);
 
         }
     }
@@ -283,7 +276,7 @@ public class PlayerController : MonoBehaviour
         isGameOver = true;
         damageSound.Play();
         gameOverMenu.SetActive(true);
-        playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
+        // playerAnimator.SetBool("isPlayerHurt", isPlayerHurts);
 
     }
     public void PlayerHurts(int damage)
@@ -293,12 +286,12 @@ public class PlayerController : MonoBehaviour
 
         playerHealth -= damage;
         healthBar.SetHealth(playerHealth);
-        playerAnimator.SetBool("isPlayerHurt", true);
+        // playerAnimator.SetBool("isPlayerHurt", true);
         if (playerHealth <= 0)
         {
-            playerAnimator.SetBool("isPlayerHurt", false);
+            // playerAnimator.SetBool("isPlayerHurt", false);
 
-            playerAnimator.SetBool("isDead", true);
+            // playerAnimator.SetBool("isDead", true);
 
 
             isGameOver = true;
@@ -308,12 +301,12 @@ public class PlayerController : MonoBehaviour
     }
     void DoPlayerHurtAnimFalse()
     {
-        playerAnimator.SetBool("isPlayerHurt", false);
+        // playerAnimator.SetBool("isPlayerHurt", false);
 
     }
     void DoPlayerDeadAnimFalse()
     {
-        playerAnimator.SetBool("isDead", false);
+        // playerAnimator.SetBool("isDead", false);
 
     }
     public void RestartGame()
